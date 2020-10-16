@@ -1,4 +1,4 @@
-// EPOS LM3S811 (ARM Cortex-M3) IC Mediator Declarations
+// EPOS Virt (ARM Cortex-M3) IC Mediator Declarations
 
 #ifndef __virt_ic_h
 #define __virt_ic_h
@@ -13,8 +13,8 @@ class IC_Engine: public IC_Common
 public:
     // Interrupts
     static const unsigned int INTS = Traits<IC>::INTS;
-    // static const unsigned int HARD_INT = NVIC::HARD_INT;
-    // static const unsigned int SOFT_INT = HARD_INT + NVIC::IRQS;
+    static const unsigned int HARD_INT = -1;
+    static const unsigned int SOFT_INT = 1;
     enum {
         // INT_SYS_TIMER   = RISCV::EXC_SYSTICK,
         // INT_USER_TIMER0 = HARD_INT + NVIC::IRQ_GPT0A,
@@ -49,7 +49,7 @@ public:
 
     static void ipi(unsigned int cpu, Interrupt_Id id) {} // NVIC is always single-core
 
-    // static void init() { nvic()->init(); };
+    static void init() ;
 
 private:
     // static NVIC * nvic() { return reinterpret_cast<NVIC *>(Memory_Map::SCB_BASE); }

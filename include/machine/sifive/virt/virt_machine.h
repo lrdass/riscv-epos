@@ -1,18 +1,15 @@
-// EPOS LM3S811 (ARM Cortex-M3) Mediator Declarations
+// EPOS Virt (ARM Cortex-M3) Mediator Declarations
 
-#ifndef __lm3s811_machine_h
-#define __lm3s811_machine_h
+#ifndef __virt_machine_h
+#define __virt_machine_h
 
 #include <machine/machine.h>
-#include <machine/cortex/engine/cortex_m3/scb.h>
-#include <machine/cortex/engine/cortex_m3/systick.h>
-#include "lm3s811_sysctrl.h"
 #include <system/memory_map.h>
 #include <system.h>
 
 __BEGIN_SYS
 
-class LM3S811: public Machine_Common
+class Virt: public Machine_Common
 {
     friend Machine;
 
@@ -21,7 +18,7 @@ private:
     typedef CPU::Log_Addr Log_Addr;
 
 public:
-    LM3S811() {}
+    Virt() {}
 
     static void delay(const Microsecond & time) {
         assert(Traits<TSC>::enabled);
@@ -29,7 +26,7 @@ public:
         while(end > TSC::time_stamp());
     }
 
-    static void reboot() { scb()->reboot(); }
+    static void reboot();
     static void poweroff() { reboot(); }
 
     static const UUID & uuid() { return System::info()->bm.uuid; } // TODO: System_Info is not populated in this machine
@@ -45,11 +42,11 @@ private:
     static void init();
 
 private:
-    static SCB * scb() { return reinterpret_cast<SCB *>(Memory_Map::SCB_BASE); }
-    static SysCtrl * scr() { return reinterpret_cast<SysCtrl *>(Memory_Map::SCR_BASE); }
+    // static SCB * scb() { return reinterpret_cast<SCB *>(Memory_Map::SCB_BASE); }
+    // static SysCtrl * scr() { return reinterpret_cast<SysCtrl *>(Memory_Map::SCR_BASE); }
 };
 
-typedef LM3S811 Machine_Model;
+typedef Virt Machine_Model;
 
 __END_SYS
 

@@ -1,7 +1,7 @@
-// EPOS LM3S811 (ARM Cortex-M3) Metainfo and Configuration
+// EPOS Virt (ARM Cortex-M3) Metainfo and Configuration
 
-#ifndef __lm3s811_traits_h
-#define __lm3s811_traits_h
+#ifndef __virt_traits_h
+#define __virt_traits_h
 
 #include <system/config.h>
 

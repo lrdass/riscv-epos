@@ -1,13 +1,11 @@
-// EPOS LM3S811 (ARM Cortex-M3) Timer Mediator Declarations
+// EPOS Virt (ARM Cortex-M3) Timer Mediator Declarations
 
-#ifndef __lm3s811_timer_h
-#define __lm3s811_timer_h
+#ifndef __virt_timer_h
+#define __virt_timer_h
 
 #define __ic_common_only__
 #include <machine/ic.h>
 #undef __ic_common_only__
-#include <machine/cortex/engine/cortex_m3/systick.h>
-#include <machine/cortex/engine/cortex_m3/gptm.h>
 #include <system/memory_map.h>
 #include <utility/convert.h>
 

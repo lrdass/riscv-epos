@@ -10,7 +10,7 @@
 
 __BEGIN_SYS
 
-class ARMv7_A_PMU: public PMU_Common
+class RISCV_PMU: public PMU_Common
 {
 private:
     typedef CPU::Reg32 Reg32;
@@ -141,7 +141,7 @@ public:
     };
 
 public:
-    ARMv7_A_PMU() {}
+    RISCV_PMU() {}
 
     static void config(const Channel & channel, const Event & event, const Flags & flags = NONE) {
         assert((static_cast<unsigned int>(channel) < CHANNELS) && (static_cast<unsigned int>(event) < EVENTS));
@@ -303,7 +303,7 @@ private:
 };
 
 
-class PMU: private ARMv7_A_PMU
+class PMU: private RISCV_PMU
 {
     friend class CPU;
 

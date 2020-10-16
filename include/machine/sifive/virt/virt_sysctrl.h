@@ -1,7 +1,7 @@
 // EPOS LM3S811 (ARM Cortex-M3) System Control Module Mediator Declarations
 
-#ifndef __lm3s811_sysctrl_h
-#define __lm3s811_sysctrl_h
+#ifndef __virt_sysctrl_h
+#define __virt_sysctrl_h
 
 #include <architecture/cpu.h>
 

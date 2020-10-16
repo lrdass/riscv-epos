@@ -1,7 +1,7 @@
-// EPOS LM3S811 (ARM Cortex-M3) Run-Time System Information
+// EPOS Virt (ARM Cortex-M3) Run-Time System Information
 
-#ifndef __lm3s811_info_h
-#define __lm3s811_info_h
+#ifndef __virt_info_h
+#define __virt_info_h
 
 #include <machine/cortex/cortex_info.h>
 
