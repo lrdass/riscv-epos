@@ -33,6 +33,7 @@ public:
 
         void save() volatile  __attribute__ ((naked));
         void load() const volatile;
+        void fr() const volatile;
 
         friend Debug & operator<<(Debug & db, const Context & c) {
             db << hex

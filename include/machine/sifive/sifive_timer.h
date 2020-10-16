@@ -118,7 +118,7 @@ class User_Timer: private User_Timer_Engine
 
 private:
     typedef User_Timer_Engine Engine;
-    typedef Engine::Count Count;
+    // typedef Engine::Count Count;
     typedef IC_Common::Interrupt_Id Interrupt_Id;
 
     static const unsigned int UNITS = Traits<Timer>::UNITS - Traits<TSC>::enabled; // TSC uses the last timer. To use the it, you must disable the TSC.

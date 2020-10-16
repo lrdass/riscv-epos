@@ -5,17 +5,17 @@
 
 __BEGIN_SYS
 
-void LM3S811::pre_init()
+void Virt::pre_init()
 {
     db<Init, Machine>(TRC) << "LM3S811::pre_init()" << endl;
 
-    scr()->clock_init();
+    // scr()->clock_init();
 }
 
-void LM3S811::init()
+void Virt::init()
 {
     db<Init, Machine>(TRC) << "LM3S811::init()" << endl;
-    scb()->enter_thread_state();
+    // scb()->enter_thread_state();
 }
 
 __END_SYS

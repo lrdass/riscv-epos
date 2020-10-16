@@ -31,8 +31,8 @@ public:
     static void init();
 
     static Time_Stamp time_stamp() {
-        Time_Stamp ts;
-        ASM("rdtsc" : "=A" (ts) : ); // must be volatile!
+        Time_Stamp ts(0);
+        ASM("nop"); // must be volatile!
         return ts;
     }
     
