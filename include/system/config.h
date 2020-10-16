@@ -114,6 +114,16 @@ namespace EPOS {
 
 #endif
 
+#ifdef __mmod_virt__
+#define __sifive__
+#define __sifive__
+#define __TSC_H                 __HEADER_ARCH(tsc)
+
+#define __UART_H                __HEADER_MACH(uart)
+#define __GPIO_H                __HEADER_MACH(gpio)
+
+#endif
+
 #ifdef __mmod_emote3__
 #define __cortex_m__
 #define __cortex_m3__

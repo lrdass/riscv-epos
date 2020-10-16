@@ -90,6 +90,8 @@ public:
     CPU() {}
     static void flags(const Flags & flags);
     static void flags();
+    static unsigned int cores() { return 1; }
+    static unsigned int id() { return 0; }
 
     static Hertz clock() { return _cpu_clock; }
     static Hertz bus_clock() { return _bus_clock; }
@@ -113,15 +115,18 @@ public:
     using CPU_Common::ntohl;
     using CPU_Common::ntohs;
 
-    // using Base::int_enable;
-    // using Base::int_disable;
-    // using Base::int_enabled;
-    // using Base::int_disabled;
 
     // using Base::sp;
     // using Base::fr;
     // using Base::ip;
     // using Base::pdp;
+    static bool int_disabled(); 
+    static bool int_enabled(); 
+
+    
+    static void int_disable(); 
+    static void int_enable();
+
 
     using Base::tsl;
     using Base::finc;
