@@ -23,7 +23,7 @@ private:
 
 public:
     // Page Flags
-    typedef MMU_Common<0, 0, 0>::Flags ARMv7_Flags;
+    typedef MMU_Common<0, 0, 0>::Flags RISCV_Flags;
 
     // Page_Table
     class Page_Table {};
@@ -48,7 +48,7 @@ public:
     private:
         Phy_Addr _phy_addr;
         unsigned int _bytes;
-        ARMv7_Flags _flags;
+        RISCV_Flags _flags;
     };
 
     // Page Directory

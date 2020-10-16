@@ -79,6 +79,7 @@ public:
     // I/O ports
     typedef Reg16 IO_Irq;
 
+    typedef Reg64 Flags;
     // Interrupt Service Routines
     typedef void (ISR)();
 
@@ -87,6 +88,8 @@ public:
 
 public:
     CPU() {}
+    static void flags(const Flags & flags);
+    static void flags();
 
     static Hertz clock() { return _cpu_clock; }
     static Hertz bus_clock() { return _bus_clock; }

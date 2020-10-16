@@ -82,9 +82,9 @@ private:
     static GPTM * int2gptm(Interrupt_Id id) {
         int i;
         switch(id) {
-        case IC::INT_USER_TIMER0: i = 0; break;
-        case IC::INT_USER_TIMER1: i = 1; break;
-        case IC::INT_USER_TIMER2: i = 2; break;
+        // case IC::INT_USER_TIMER0: i = 0; break;
+        // case IC::INT_USER_TIMER1: i = 1; break;
+        // case IC::INT_USER_TIMER2: i = 2; break;
         default: i = 3;
         }
         return gptm(i);

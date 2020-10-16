@@ -1,7 +1,7 @@
 // EPOS ARM Cortex IC Mediator Declarations
 
-#ifndef __cortex_ic_h
-#define __cortex_ic_h
+#ifndef __sifive_ic_h
+#define __sifive_ic_h
 
 #include <architecture/cpu.h>
 #include <machine/ic.h>
