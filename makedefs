@@ -88,7 +88,7 @@ UUID                    = $(shell cat /proc/sys/kernel/random/uuid | sed 's/-//g
 
 # Compiler prefixes
 ia32_COMP_PREFIX	:= /usr/bin/x86_64-linux-gnu-
-riscv_COMP_PREFIX	:= /opt/riscv/bin/riscv64-unknown-linux-gnu-
+riscv_COMP_PREFIX	:= /opt/riscv/bin/riscv64-unknown-elf-
 armv7_COMP_PREFIX	:= /usr/bin/arm-none-eabi-
 armv8_COMP_PREFIX	:= /usr/bin/arm-none-eabi-
 COMP_PREFIX		= $($(ARCH)_COMP_PREFIX)
