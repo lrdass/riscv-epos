@@ -22,16 +22,16 @@ class TSC: private TSC_Common
 
 private:
     static const unsigned int CLOCK = Traits<Machine>::TIMER_CLOCK;
-    static const unsigned int ACCURACY = XXXXXX; // ppb
+    static const unsigned int ACCURACY = 100000000; // ppb
 
     enum {
-        REG_BASE = XXXXXX
+        REG_BASE = 0x0200bff8
     };
 
     //offsets
-    enum {              // Description
-        FIELD       = XXXXXX
-    };
+    // enum {              // Description
+        // FIELD       = 
+    // };
 
 public:
     using TSC_Common::Time_Stamp;

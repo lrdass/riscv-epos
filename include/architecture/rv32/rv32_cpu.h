@@ -31,13 +31,14 @@ public:
     typedef Reg32 Flags;
     enum {
         //implement
+        FLAG_Z = 1 << 30
     };
 
     // CPU Context
     class Context
     {
     public:
-        Context(const Log_Addr & entry, const Log_Addr & exit): reg_flags(FLAG_DEFAULTS), reg_ra(exit), reg_ip(entry) {}
+        Context(const Log_Addr & entry, const Log_Addr & exit): reg_flags(FLAG_Z), reg_ra(exit), reg_ip(entry) {}
 
         void save() volatile  __attribute__ ((naked));
         void load() const volatile;
@@ -52,8 +53,8 @@ public:
     public:
         Reg32 reg_flags;
         Reg32 _general_use_reg0; //all registers that must be saved
-        Reg32 _reg_ra; // return address register
-        Reg32 _reg_ip; //instruction pointer
+        Reg32 reg_ra; // return address register
+        Reg32 reg_ip; //instruction pointer
     };
 
     
