@@ -177,7 +177,7 @@ namespace EPOS {
 
 #ifdef __mach_riscv__
 #define __riscv__
-// #define __TSC_H                 __HEADER_ARCH(tsc)
+#define __TSC_H                 __HEADER_ARCH(tsc)
 
 #define __UART_H                __HEADER_MACH(uart)
 #endif

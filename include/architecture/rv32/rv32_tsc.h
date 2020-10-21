@@ -25,11 +25,12 @@ private:
     static const unsigned int ACCURACY = 100000000; // ppb
 
     enum {
-        REG_BASE = 0x0200bff8
+        REG_BASE = 0x0200bff8,
+        TSC_BASE = 0x0,
     };
 
     //offsets
-    // enum {              // Description
+    // enum {             // Description
         // FIELD       = 
     // };
 
@@ -42,16 +43,16 @@ public:
     TSC() {}
 
     static Hertz frequency() { return CLOCK; }
-    static PPB accuracy() { return ACCURACY; }
+    // static PPB accuracy() { return ACCURACY; }
 
     static Time_Stamp time_stamp() {
-        // Implement
+        return 0;
     }
 
 private:
     static void init();
 
-    static volatile CPU::Reg32 & reg(unsigned int o) { return reinterpret_cast<volatile CPU::Reg32 *>(TSC_BASE)[o / sizeof(CPU::Reg32)]; }
+    // static volatile CPU::Reg32 & reg(unsigned int o) { return reinterpret_cast<volatile CPU::Reg32 *>(TSC_BASE)[o / sizeof(CPU::Reg32)]; }
 
 };
 
