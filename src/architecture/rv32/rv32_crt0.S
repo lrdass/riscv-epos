@@ -12,37 +12,39 @@ _start:
 	csrw satp, zero
 
         # la a0, __bss_start
-	# la a1, __bss_end
+	# la a1, _end
 	# bgeu a0, a1, 2f
-1:
-	# sw zero, (a0) # store doubleword - guarda "duas palavras 32bits = 64"
-	# addi a0, a0, 4 # incrementa 64 bits até chegar no fim da bss
+# 1:
+	# sw zero, (a0) # store word
+	# addi a0, a0, 4 # incrementa 32 bits até chegar no fim da bss
 	# bltu a0, a1, 1b
         
 2:
         # Set all bytes in the BSS section to zero.
         # la sp, _stack_end
-        la t2, _vector_table
-        csrw	mstatus, t0
-        la t1, _init
+        # la t2, _vector_table
+        # csrw	mstatus, t0
+        # la t1, _init
 
-        csrw	mepc, t1
-        csrw mtvec, t2
-        la		ra, 4f
+        # csrw	mepc, t1
+        # csrw    mtvec, t2
+        # la		ra, 4f
         # implement
 
         # Call _init
-        mret
+        # call _init
+
+        call _init
 
         # Call main
         .align  4
         .globl  __epos_app_entry
         .type   __epos_app_entry, function
-4:
-        wfi
-	j 4b
 __epos_app_entry:
         call      main
         lw        a0, 0(sp)         #save main's return value to be used by exit()
         call      _fini
         call      _exit
+4:
+        wfi
+	j 4b
