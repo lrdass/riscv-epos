@@ -13,9 +13,8 @@ unsigned int CPU::_bus_clock;
 void CPU::Context::save() volatile
 {
     // implement
-    ASM("\t\n\
-        addi sp, sp, -128           \t\n\    
-        sw ra, 0(sp)                \t\n\      
+    ASM("addi sp, sp, -128           \t\n\
+        sw ra, 0(sp)                \t\n\
         sw a0, 8(sp)                \t\n\
         sw a1, 16(sp)               \t\n\
         sw a2, 24(sp)               \t\n\
@@ -31,13 +30,12 @@ void CPU::Context::save() volatile
         sw t4, 104(sp)              \t\n\
         sw t5, 112(sp)              \t\n\
         sw t6, 120(sp)              \t\n\
-        ");
+    ");
 }
 
 void CPU::Context::load() const volatile
 {
-    ASM("\t\n\
-        lw ra, 0(sp)         \t\n\
+    ASM("lw ra, 0(sp)         \t\n\
         lw a0, 8(sp)         \t\n\
         lw a1, 16(sp)        \t\n\
         lw a2, 24(sp)        \t\n\
@@ -53,14 +51,13 @@ void CPU::Context::load() const volatile
         lw t4, 104(sp)       \t\n\
         lw t5, 112(sp)       \t\n\
         lw t6, 120(sp)       \t\n\
-        ");
+    ");
     // implement
 }
 
 void CPU::switch_context(Context ** o, Context * n)
 {
-    ASM("
-    ");
+    ASM("nop");
     // implement
 }
 
