@@ -22,7 +22,7 @@ template <> struct Traits<Machine>: public Traits<Machine_Common>
     // Physical Memory
     static const unsigned int MEM_BASE          = 0x80000000; // sao usadas
     static const unsigned int VECTOR_TABLE      = 0x10001000; // not used - realocar 
-    static const unsigned int PAGE_TABLES       = 0x89000000; // tablea de paginas 
+    static const unsigned int PAGE_TABLES       = 0x80000000; // tablea de paginas 
     static const unsigned int MEM_TOP           = 0x88000000; // + 128mb
     static const unsigned int BOOT_STACK        = 0x88000000; // stack durante boot
 
@@ -50,7 +50,7 @@ template <> struct Traits<Machine>: public Traits<Machine_Common>
     static const unsigned int MAX_THREADS       = 16;
 
     // PLL clocks
-    static const unsigned int IO_PLL_CLOCK      = 0x3000000;     // clock uart
+    static const unsigned int IO_PLL_CLOCK      = 1843200;     // clock uart
     static const unsigned int TIMER_CLOCK       = 0x0200bff8;    // frequencia timer
 };
 
@@ -59,7 +59,7 @@ template <> struct Traits<IC>: public Traits<Machine_Common>
     static const bool debugged = hysterically_debugged;
 
     static const unsigned int IRQS = 1; // tamanho da entrada
-    static const unsigned int INTS = 1; // valor max interrupcao id interrupcao < indice
+    static const unsigned int INTS = 32; // valor max interrupcao id interrupcao < indice
 };
 
 template <> struct Traits<Timer>: public Traits<Machine_Common>
@@ -83,7 +83,7 @@ template <> struct Traits<UART>: public Traits<Machine_Common>
     static const unsigned int CLOCK = Traits<Machine>::IO_PLL_CLOCK/CLOCK_DIVISOR;
 
     static const unsigned int DEF_UNIT = 1;
-    static const unsigned int DEF_BAUD_RATE = 115200;
+    static const unsigned int DEF_BAUD_RATE = 38400;
     static const unsigned int DEF_DATA_BITS = 8;
     static const unsigned int DEF_PARITY = 0; // none
     static const unsigned int DEF_STOP_BITS = 1;

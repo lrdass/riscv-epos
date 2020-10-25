@@ -51,6 +51,7 @@ void CPU::Context::load() const volatile
         lw t4, 104(sp)       \t\n\
         lw t5, 112(sp)       \t\n\
         lw t6, 120(sp)       \t\n\
+        addi sp, sp, 128     \t\n\
     ");
     // implement
 }

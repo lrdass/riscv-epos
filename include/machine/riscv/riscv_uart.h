@@ -33,11 +33,24 @@ private:
     // uart useful bits
     enum {
         // implement
+
     };
 
     enum {
         UART_BASE       = Memory_Map::UART_BASE,
-        UART_BUFFER     = UART_BASE
+        UART_BUFFER     = UART_BASE,
+        UART_REG_QUEUE =   0,
+        UART_REG_DLL   =   0,
+        UART_REG_IER   =   1,
+        UART_REG_DLM   =   1,
+        UART_REG_FCR   =   2,
+        UART_REG_LCR   =   3,
+        UART_REG_MCR   =   4,
+        UART_REG_LSR   =   5,
+        UART_REG_MSR   =   6,
+        UART_REG_SCR   =   7,
+        UART_REG_STATUS_RX = 0x01,
+        UART_REG_STATUS_TX = 0x20,
     };
 
 public:
@@ -59,24 +72,22 @@ public:
     void config(unsigned int * baud_rate, unsigned int * data_bits, unsigned int * parity, unsigned int * stop_bits) {}
 
     Reg8 rxd() { 
-        // implement
         volatile Reg8 *ch = reinterpret_cast<Reg8 *>(UART_BUFFER);
         return ch[UART_REG];
     }
     void txd(Reg8 c) { 
-        // implement
         volatile Reg8 *ch = reinterpret_cast<Reg8 *>(UART_BUFFER);
         ch[UART_REG] = c;
     }
-
+    
     bool rxd_ok() { 
-        // implement
-        return true;
+        Reg8 *uart = reinterpret_cast<Reg8 *>(UART_BUFFER);
+        return (uart[UART_REG_LSR] & UART_REG_STATUS_RX) == 0;
     }
 
     bool txd_ok() { 
-        // implement
-        return true;
+        Reg8 *uart = reinterpret_cast<Reg8 *>(UART_BUFFER);
+        return (uart[UART_REG_LSR] & UART_REG_STATUS_TX) == 0;
     }
 
     bool rxd_full() { return false; } // implement
