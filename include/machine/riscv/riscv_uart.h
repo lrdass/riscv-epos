@@ -27,6 +27,7 @@ private:
     // uart offsets
     enum {
         // implement
+        UART_REG = 0x00
     };
 
     // uart useful bits
@@ -35,7 +36,8 @@ private:
     };
 
     enum {
-        UART_BASE       = Memory_Map::UART_BASE
+        UART_BASE       = Memory_Map::UART_BASE,
+        UART_BUFFER     = UART_BASE
     };
 
 public:
@@ -58,10 +60,13 @@ public:
 
     Reg8 rxd() { 
         // implement
-        return Reg8(0);
+        volatile Reg8 *ch = reinterpret_cast<Reg8 *>(UART_BUFFER);
+        return ch[UART_REG];
     }
     void txd(Reg8 c) { 
         // implement
+        volatile Reg8 *ch = reinterpret_cast<Reg8 *>(UART_BUFFER);
+        ch[UART_REG] = c;
     }
 
     bool rxd_ok() { 
