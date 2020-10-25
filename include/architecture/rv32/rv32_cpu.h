@@ -182,7 +182,7 @@ public:
     static void csrr31() { /* implement - write ctrl and status register to x31 */ }
     static void csrw31() { /* implement - write x31 to ctrl and status register */ }
 
-    static unsigned int int_id() { return 0; }
+    static unsigned int int_id() { return 0; } // interrupt id
 
 
     static void switch_context(Context ** o, Context * n) __attribute__ ((naked));
