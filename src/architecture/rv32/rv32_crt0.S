@@ -1,7 +1,5 @@
-# EPOS RISC-V Program Starter
-
         .file "rv32_crt0.S"
-
+        
         .option norvc
         .section .text
         .align  4
@@ -30,13 +28,13 @@ _start:
 
         
         # Set all bytes in the BSS section to zero.
-        # la sp, _stack_end
-        # la t2, _vector_table
+        la sp, __boot_stack__
+        la t2, _vector_table
         # csrw	mstatus, t0
         # la t1, _init
 
         # csrw	mepc, t1
-        # csrw    mtvec, t2
+        csrw    mtvec, t2
         # la		ra, 4f
         # implement
 
