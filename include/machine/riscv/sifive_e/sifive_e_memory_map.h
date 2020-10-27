@@ -4,6 +4,7 @@
 #define __riscv_memory_map_h
 
 
+
 #include <system/memory_map.h>
 
 
@@ -13,7 +14,7 @@ struct Memory_Map
 {
     // Physical Memory
     enum {
-        UART_BASE                   = 0x10010000, // UART
+        UART_BASE                   = 0x10000000, // UART
         TIMER_BASE                  = 0x02004000,
         GPIOA_BASE                  = 0x10001000,
         RTC_BASE                    = 0x101000,

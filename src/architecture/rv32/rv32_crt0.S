@@ -1,13 +1,13 @@
+# EPOS RISC-V Program Starter
+
         .file "rv32_crt0.S"
-        
-        .option norvc
+
         .section .text
         .align  4
         .global _start
         .type   _start, function
 _start:
-
-                csrr t0, mhartid # reading CSR mhartid
+        csrr t0, mhartid # reading CSR mhartid
 	bnez t0, 4f
 
         la   sp, __boot_stack__
@@ -25,33 +25,30 @@ _start:
 	bltu	a0, a1, 1b
 
 2:
-
-        
         # Set all bytes in the BSS section to zero.
-        la sp, __boot_stack__
-        la t2, _vector_table
-        # csrw	mstatus, t0
-        # la t1, _init
+        # la sp, _stack_end
 
-        # csrw	mepc, t1
-        csrw    mtvec, t2
-        # la		ra, 4f
+        la      t2, _vector_table
+        la      t1, _init
+
+        csrw	mepc, t1
+        # csrw mtvec, t2
+        la	ra, 4f
         # implement
 
         # Call _init
-        # call _init
-
-        call _init
+        mret
 
         # Call main
         .align  4
         .globl  __epos_app_entry
         .type   __epos_app_entry, function
+
+__epos_app_entry:
+        call      main
+        lw        a0, 0(sp)         # save main's return value to be used by exit()
+        call      _fini
+        call      _exit
 4:
         wfi
 	j 4b
-__epos_app_entry:
-        call      main
-        lw        a0, 0(sp)         #save main's return value to be used by exit()
-        call      _fini
-        call      _exit
