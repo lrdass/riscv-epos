@@ -38,10 +38,10 @@ template <> struct Traits<Machine>: public Traits<Machine_Common>
     static const unsigned int APP_HIGH          = 0x88000000; //128mb
 
     static const unsigned int PHY_MEM           = 0x80000000;
-    static const unsigned int IO_BASE           = 0x10000000; // mmio 
+    static const unsigned int IO_BASE           = 0x10010000; // mmio 
     static const unsigned int IO_TOP            = 0x10011000; // 
 
-    static const unsigned int SYS               = 0x80000000;
+    static const unsigned int SYS               = IO_TOP;
     static const unsigned int SYS_CODE          = 0x80000000;
     static const unsigned int SYS_DATA          = 0x80000000;
 
