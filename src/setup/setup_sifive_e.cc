@@ -9,63 +9,6 @@ void _vector_table()
 {   
   
  ASM("\t\n\
-        .word   _int_entry + 1              \t\n\
-        .word   _int_entry + 1              \t\n\
-        .word   _int_entry + 1              \t\n\
-        .word   _int_entry + 1              \t\n\
-        .word   _int_entry + 1              \t\n\
-        .word   _int_entry + 1              \t\n\
-        .word   _int_entry + 1              \t\n\
-        .word   _int_entry + 1              \t\n\
-        .word   _int_entry + 1              \t\n\
-        .word   _int_entry + 1              \t\n\
-        .word   _int_entry + 1              \t\n\
-        .word   _int_entry + 1              \t\n\
-        .word   _int_entry + 1              \t\n\
-        .word   _int_entry + 1              \t\n\
-        .word   _int_entry + 1              \t\n\
-        .word   _int_entry + 1              \t\n\
-        .word   _int_entry + 1              \t\n\
-        .word   _int_entry + 1              \t\n\
-        .word   _int_entry + 1              \t\n\
-        .word   _int_entry + 1              \t\n\
-        .word   _int_entry + 1              \t\n\
-        .word   _int_entry + 1              \t\n\
-        .word   _int_entry + 1              \t\n\
-        .word   _int_entry + 1              \t\n\
-        .word   _int_entry + 1              \t\n\
-        .word   _int_entry + 1              \t\n\
-        .word   _int_entry + 1              \t\n\
-        .word   _int_entry + 1              \t\n\
-        .word   _int_entry + 1              \t\n\
-        .word   _int_entry + 1              \t\n\
-        .word   _int_entry + 1              \t\n\
-        .word   _int_entry + 1              \t\n\
-        .word   _int_entry + 1              \t\n\
-        .word   _int_entry + 1              \t\n\
-        .word   _int_entry + 1              \t\n\
-        .word   _int_entry + 1              \t\n\
-        .word   _int_entry + 1              \t\n\
-        .word   _int_entry + 1              \t\n\
-        .word   _int_entry + 1              \t\n\
-        .word   _int_entry + 1              \t\n\
-        .word   _int_entry + 1              \t\n\
-        .word   _int_entry + 1              \t\n\
-        .word   _int_entry + 1              \t\n\
-        .word   _int_entry + 1              \t\n\
-        .word   _int_entry + 1              \t\n\
-        .word   _int_entry + 1              \t\n\
-        .word   _int_entry + 1              \t\n\
-        .word   _int_entry + 1              \t\n\
-        .word   _int_entry + 1              \t\n\
-        .word   _int_entry + 1              \t\n\
-        .word   _int_entry + 1              \t\n\
-        .word   _int_entry + 1              \t\n\
-        .word   _int_entry + 1              \t\n\
-        .word   _int_entry + 1              \t\n\
-        .word   _int_entry + 1              \t\n\
-        .word   _int_entry + 1              \t\n\
-        .word   _int_entry + 1              \t\n\
         j _start                            \t\n\
         ");
 };

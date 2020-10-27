@@ -23,8 +23,7 @@ void IC::entry()
 {
     // Implement
     ASM("                                           \n"
-        "ic_entry_loop:                             \n"
-        "       j ic_entry_loop                     \n"
+        "       nop                                 \n"
         );
 }
 
