@@ -2,6 +2,7 @@ Compilando:
 executar: make APPLICATION=hello run
 - Será impresso a sequências de prints que demonstram o funcionamento do escalonador.
 
+Validações:
 executar: make APPLICATION=hello debug
 Para os pontos seguintes optamos por exemplificar com debug pois nao conseguimos acessar valores inline de registradores e de alguns
 locais da memoria especifico no espaco de usuario.
