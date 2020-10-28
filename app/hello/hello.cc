@@ -8,30 +8,21 @@ using namespace EPOS;
 Thread *t1, *t2;
 OStream cout;
 
-
 int thread1(){
-    OStream cout;
-    cout << "primeira" << endl;
+    cout << "Primeira Thread criada com tempo maior!" << endl;
     return 1;
 }
 
 int thread2(){
-    OStream cout;
-    cout << "segunda" << endl;
+    cout << "Segunda Thread criada com tempo menor!" << endl;
     return 2;
 }
 
-int bss0;
-
 int main()
 {
-    cout<< "bss value: " << endl;
-    cout<< bss0 << endl;
-
     
-    t1 = new Thread(&thread1);
-    t2 = new Thread(&thread2);
-
+    t1 = new Thread(Thread::Configuration(Thread::READY, Thread::Criterion(180)), &thread1);
+    t2 = new Thread(Thread::Configuration(Thread::READY, Thread::Criterion(100)), &thread2);
     t1->join();
     t2->join();
 

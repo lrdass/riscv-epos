@@ -1,7 +1,5 @@
-bss value: 
-0
-primeira
-segunda
+Segunda Thread criada com tempo menor!
+Primeira Thread criada com tempo maior!
 finished
 The last thread has exited!
 Rebooting the machine ...
