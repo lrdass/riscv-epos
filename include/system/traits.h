@@ -26,6 +26,7 @@ template<typename> class Scheduler;
 namespace Scheduling_Criteria
 {
     class Priority;
+    class SJF;
     class FCFS;
     class RR;
     class RM;

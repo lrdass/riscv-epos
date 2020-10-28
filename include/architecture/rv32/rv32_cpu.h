@@ -41,8 +41,7 @@ public:
     class Context
     {
     public:
-        Context(const Log_Addr & entry, const Log_Addr & exit): _reg_ra(exit), _reg_ip(entry), _zero(0) {}
-
+        Context(const Log_Addr & entry, const Log_Addr & exit): _zero(0), _reg_ra(exit), _reg_ip(entry) {}
         void save() volatile  __attribute__ ((naked));
         void load() const volatile;
 
@@ -54,36 +53,37 @@ public:
         }
 
     public:
+    Reg32 _zero;
         Reg32 _reg_ra; // return address
-        Reg32 _reg_x31;
-        Reg32 _reg_x30;
-        Reg32 _reg_x29;
-        Reg32 _reg_x28;
-        Reg32 _reg_x27;
-        Reg32 _reg_x26;
-        Reg32 _reg_x25;
-        Reg32 _reg_x24;
-        Reg32 _reg_x23;
-        Reg32 _reg_x22;
-        Reg32 _reg_x21;
-        Reg32 _reg_x20;
-        Reg32 _reg_x19;
-        Reg32 _reg_x18;
-        Reg32 _reg_x17;
-        Reg32 _reg_x16;
-        Reg32 _reg_x15;
-        Reg32 _reg_x14;
-        Reg32 _reg_x13;
-        Reg32 _reg_x12;
-        Reg32 _reg_x11;
-        Reg32 _reg_x10;
-        Reg32 _reg_x9;
-        Reg32 _reg_x8;
-        Reg32 _reg_x7;
-        Reg32 _reg_x6;
         Reg32 _reg_x5; // general-purpose registers (x5-31)
+        Reg32 _reg_x6;
+        Reg32 _reg_x7;
+        Reg32 _reg_x8;
+        Reg32 _reg_x9;
+        Reg32 _reg_x10;
+        Reg32 _reg_x11;
+        Reg32 _reg_x12;
+        Reg32 _reg_x13;
+        Reg32 _reg_x14;
+        Reg32 _reg_x15;
+        Reg32 _reg_x16;
+        Reg32 _reg_x17;
+        Reg32 _reg_x18;
+        Reg32 _reg_x19;
+        Reg32 _reg_x20;
+        Reg32 _reg_x21;
+        Reg32 _reg_x22;
+        Reg32 _reg_x23;
+        Reg32 _reg_x24;
+        Reg32 _reg_x25;
+        Reg32 _reg_x26;
+        Reg32 _reg_x27;
+        Reg32 _reg_x28;
+        Reg32 _reg_x29;
+        Reg32 _reg_x30;
+        Reg32 _reg_x31;
         Reg32 _reg_ip; // instruction pointer
-        Reg32 _zero;
+       
     };
 
     // Interrupt Service Routines
@@ -103,20 +103,19 @@ public:
         return value;
         }
 
+    // stack pointer
     static void sp(const Reg32 & sp) {
         ASM("sw sp, %0" : : "r"(sp) : "sp");
     }
 
     static Reg32 fr() {
-        Reg32 value;
-        ASM("add %0, zero, a0" : "=r"(value) :); //TODO nao sei se esta certo
-        return value;
+        return 0;
     }
 
     static void fr(const Reg32 & fr) {
-        ASM("sw a0, %0" : : "r"(fr) :);//TODO nao sei se esta certo
     }
 
+    // instruction pointer
     static Log_Addr ip() {
         Reg32 value;
         ASM("lw %0, pc" : "=r"(value) :);
@@ -132,47 +131,25 @@ public:
     using CPU_Common::tsl;
     template<typename T>
     static T tsl(volatile T & lock) {
-        register T old;
-        register T one = 1;
-        ASM("1: lr.w  %0, %1            \n"
-            "   sc.w  t3, %1, %2        \n" // sc.w rd, address, value
-            "   bne   t3, zero, 1b      \n" : "=&r"(old) : "r"(&lock), "r"(one) : "t3");
-        return old;
+        
     }
 
     using CPU_Common::finc;
     template<typename T>
     static T finc(volatile T & value) {
-        register T old;
-        ASM("1: lr.w  %0, %1            \n" //carrega atomicamente o valor de lock em old
-            "   addi     %0, 1          \n" //Acrescenta 1 em old(valor de lock)
-            "   amoswap.w  t3, %0, (%1) \n" //amoswap.w rd, r2, address
-            "   bne     t3, zero, 1b    \n" : "=&r"(old) : "r"(&value) :"t3");
-        return old - 1;
+        
     }
 
     using CPU_Common::fdec;
     template<typename T>
     static T fdec(volatile T & value) {
-        register T old;
-        ASM("1: lr.w  %0, %1            \n"
-            "   addi    t3, zero, 1     \n"
-            "   sub     %0, %0, t3      \n"
-            "   sc.w    t3, %0, %1      \n"
-            "   bne     t3, zero, 1b    \n" : "=&r"(old) : "r"(&value) : "t3", "cc");
-        return old + 1;
+        
     }
 
     using CPU_Common::cas;
      template <typename T>
     static T cas(volatile T & value, T compare, T replacement) {
-        register T old;
-        ASM("1: lr.w   %0, %1           \n"
-            "   bne    %0, %2, 2f       \n"
-            "   sc.w   t3, %1, %3       \n"
-            "   bne    t3, zero, 1b     \n"
-            "2:                         \n" : "=&r"(old) : "r"(&value), "r"(compare), "r"(replacement) : "t3", "cc");
-        return old;
+       
     }
 
 

@@ -1,0 +1,6 @@
+Segunda Thread criada com tempo menor!
+Primeira Thread criada com tempo maior!
+finished
+The last thread has exited!
+Rebooting the machine ...
+Machine::reboot()
