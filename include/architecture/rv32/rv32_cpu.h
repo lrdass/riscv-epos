@@ -41,8 +41,7 @@ public:
     class Context
     {
     public:
-        Context(const Log_Addr & entry, const Log_Addr & exit): _reg_ra(exit), _reg_ip(entry), _zero(0) {}
-
+        Context(const Log_Addr & entry, const Log_Addr & exit): _zero(0), _reg_ra(exit), _reg_ip(entry) {}
         void save() volatile  __attribute__ ((naked));
         void load() const volatile;
 
@@ -54,36 +53,37 @@ public:
         }
 
     public:
+    Reg32 _zero;
         Reg32 _reg_ra; // return address
-        Reg32 _reg_x31;
-        Reg32 _reg_x30;
-        Reg32 _reg_x29;
-        Reg32 _reg_x28;
-        Reg32 _reg_x27;
-        Reg32 _reg_x26;
-        Reg32 _reg_x25;
-        Reg32 _reg_x24;
-        Reg32 _reg_x23;
-        Reg32 _reg_x22;
-        Reg32 _reg_x21;
-        Reg32 _reg_x20;
-        Reg32 _reg_x19;
-        Reg32 _reg_x18;
-        Reg32 _reg_x17;
-        Reg32 _reg_x16;
-        Reg32 _reg_x15;
-        Reg32 _reg_x14;
-        Reg32 _reg_x13;
-        Reg32 _reg_x12;
-        Reg32 _reg_x11;
-        Reg32 _reg_x10;
-        Reg32 _reg_x9;
-        Reg32 _reg_x8;
-        Reg32 _reg_x7;
-        Reg32 _reg_x6;
         Reg32 _reg_x5; // general-purpose registers (x5-31)
+        Reg32 _reg_x6;
+        Reg32 _reg_x7;
+        Reg32 _reg_x8;
+        Reg32 _reg_x9;
+        Reg32 _reg_x10;
+        Reg32 _reg_x11;
+        Reg32 _reg_x12;
+        Reg32 _reg_x13;
+        Reg32 _reg_x14;
+        Reg32 _reg_x15;
+        Reg32 _reg_x16;
+        Reg32 _reg_x17;
+        Reg32 _reg_x18;
+        Reg32 _reg_x19;
+        Reg32 _reg_x20;
+        Reg32 _reg_x21;
+        Reg32 _reg_x22;
+        Reg32 _reg_x23;
+        Reg32 _reg_x24;
+        Reg32 _reg_x25;
+        Reg32 _reg_x26;
+        Reg32 _reg_x27;
+        Reg32 _reg_x28;
+        Reg32 _reg_x29;
+        Reg32 _reg_x30;
+        Reg32 _reg_x31;
         Reg32 _reg_ip; // instruction pointer
-        Reg32 _zero;
+       
     };
 
     // Interrupt Service Routines

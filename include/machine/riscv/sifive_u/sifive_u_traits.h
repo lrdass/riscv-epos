@@ -40,7 +40,7 @@ template <> struct Traits<Machine>: public Traits<Machine_Common>
     static const unsigned int IO_BASE           = 0x10010000; // mmio 
     static const unsigned int IO_TOP            = 0x10011000; // 
 
-    static const unsigned int SYS               = IO_TOP;
+    static const unsigned int SYS               = 0x80000000;
     static const unsigned int SYS_CODE          = 0x80000000;
     static const unsigned int SYS_DATA          = 0x80000000;
 
@@ -50,7 +50,7 @@ template <> struct Traits<Machine>: public Traits<Machine_Common>
     static const unsigned int MAX_THREADS       = 16;
 
     // PLL clocks
-    static const unsigned int IO_PLL_CLOCK      = 1843200;     // clock uart
+    static const unsigned int IO_PLL_CLOCK      = 0x30000000;     // clock uart
     static const unsigned int TIMER_CLOCK       = 0x0200bff8;    // frequencia timer
 };
 
@@ -83,7 +83,7 @@ template <> struct Traits<UART>: public Traits<Machine_Common>
     static const unsigned int CLOCK = Traits<Machine>::IO_PLL_CLOCK/CLOCK_DIVISOR;
 
     static const unsigned int DEF_UNIT = 1;
-    static const unsigned int DEF_BAUD_RATE = 38400;
+    static const unsigned int DEF_BAUD_RATE = 115200;
     static const unsigned int DEF_DATA_BITS = 8;
     static const unsigned int DEF_PARITY = 0; // none
     static const unsigned int DEF_STOP_BITS = 1;

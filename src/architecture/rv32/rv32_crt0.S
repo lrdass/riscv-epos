@@ -28,11 +28,12 @@ _start:
         # Set all bytes in the BSS section to zero.
         # la sp, _stack_end
 
-        la      t2, _vector_table
         la      t1, _init
-
         csrw	mepc, t1
-        # csrw mtvec, t2
+        
+        la     t2, _int_entry
+        csrw   mtvec, t2
+
         la	ra, 4f
         # implement
 

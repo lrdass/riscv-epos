@@ -42,7 +42,6 @@ private:
         FR                      = 0x18,
         UART_MODEM_CONTROL      = 0x10,
         INTERRUPT_ENABLE        = 0x001, // Interrupt Enable	R/W, DLAB = 0 [0=DR,1=THRE,2=LI,3=MO]
-        
     };
 
     // uart useful bits
