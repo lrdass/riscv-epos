@@ -1,7 +1,3 @@
-# EPOS RISC-V Program Starter
-
-        .file "rv32_crt0.S"
-
         .section .text
         .align  4
         .global _start
@@ -15,7 +11,9 @@ _start:
         .option norelax
 	la  gp, __global_pointer$
         .option pop
-
+        
+        csrw	satp, zero
+        
         la a0, __bss_start
         la a1, __BSS_END__
 	bgeu a0, a1, 2f

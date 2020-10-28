@@ -94,7 +94,6 @@ namespace Scheduling_Criteria
         FCFS(int p = NORMAL, Tn & ... an);
     };
 
-
     // Multicore Algorithms
     class Variable_Queue
     {

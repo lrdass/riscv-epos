@@ -1,5 +1,8 @@
+bss value: 
+0
 primeira
 segunda
 finished
-QEMU: Terminated
-
+The last thread has exited!
+Rebooting the machine ...
+Machine::reboot()
