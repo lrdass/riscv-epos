@@ -14,7 +14,7 @@ void MMU::init()
 {
     db<Init, MMU>(TRC) << "MMU::init()" << endl;
 
-    db<Init, MMU>(INF) << "MMU::init::dat.b=" << &_edata << ",bss.b=" << &__bss_start << ",bss.e=" << &_end << endl;
+    db<Init, MMU>(INF) << "MMU::init::dat.e=" << &_edata << ",bss.b=" << &__bss_start << ",bss.e=" << &_end << endl;
 
     // For machines that do not feature a real MMU, frame size = 1 byte
     // TODO: The stack left at the top of the memory for INIT is freed at Thread::init()

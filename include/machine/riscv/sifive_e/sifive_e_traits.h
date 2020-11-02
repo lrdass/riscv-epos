@@ -22,10 +22,10 @@ template <> struct Traits<Machine>: public Traits<Machine_Common>
 
     // Physical Memory
     static const unsigned int MEM_BASE          = 0x80000000; // sao usadas
-    static const unsigned int VECTOR_TABLE      = 0x80000000; // not used - realocar 
-    static const unsigned int PAGE_TABLES       = 0x800030d0; // tablea de paginas 
-    static const unsigned int MEM_TOP           = 0x88000000; // + 128mb
-    static const unsigned int BOOT_STACK        = 0x87FFFFE0 ; // stack durante boot
+    static const unsigned int VECTOR_TABLE      = NOT_USED; // not used - realocar
+    static const unsigned int PAGE_TABLES       = NOT_USED; // tablea de paginas
+    static const unsigned int MEM_TOP           = 0x87ffffff; // + 128mb
+    static const unsigned int BOOT_STACK        = 0x87ffffff ; // stack durante boot
 
     // Logical Memory Map
     static const unsigned int BOOT              = NOT_USED;
@@ -35,11 +35,11 @@ template <> struct Traits<Machine>: public Traits<Machine_Common>
     static const unsigned int APP_LOW           = 0x80000000; // endereco de codigo
     static const unsigned int APP_CODE          = 0x80000000; // endereco de codigo
     static const unsigned int APP_DATA          = 0x80000000; // dados
-    static const unsigned int APP_HIGH          = 0x88000000; //128mb
+    static const unsigned int APP_HIGH          = 0x87ffffff; //128mb
 
-    static const unsigned int PHY_MEM           = 0x80000000;
-    static const unsigned int IO_BASE           = 0x10010000; // mmio 
-    static const unsigned int IO_TOP            = 0x10011000; // 
+    static const unsigned int PHY_MEM           = NOT_USED;
+    static const unsigned int IO_BASE           = NOT_USED; // mmio
+    static const unsigned int IO_TOP            = NOT_USED; //
 
     static const unsigned int SYS               = IO_TOP;
     static const unsigned int SYS_CODE          = 0x80000000;
@@ -52,7 +52,7 @@ template <> struct Traits<Machine>: public Traits<Machine_Common>
 
     // PLL clocks
     static const unsigned int IO_PLL_CLOCK      = 0x3686400;     // clock uart
-    static const unsigned int TIMER_CLOCK       = 0x0200bff8;    // frequencia timer
+    static const unsigned int TIMER_CLOCK       = 10000000;    // frequencia timer
 
 };
 
@@ -60,8 +60,8 @@ template <> struct Traits<IC>: public Traits<Machine_Common>
 {
     static const bool debugged = hysterically_debugged;
 
-    static const unsigned int IRQS = 1;
-    static const unsigned int INTS = 32;
+    static const unsigned int IRQS = 0;
+    static const unsigned int INTS = 0;
 };
 
 template <> struct Traits<Timer>: public Traits<Machine_Common>
@@ -80,8 +80,9 @@ template <> struct Traits<UART>: public Traits<Machine_Common>
 {
     static const unsigned int UNITS = 2;
 
+    static const unsigned int REFERENCE_CLOCK = 22729000;
     static const unsigned int CLOCK_DIVISOR = 16;
-    static const unsigned int CLOCK = Traits<Machine>::IO_PLL_CLOCK/CLOCK_DIVISOR;
+    static const unsigned int CLOCK = REFERENCE_CLOCK/CLOCK_DIVISOR;
 
     static const unsigned int DEF_UNIT = 1;
     static const unsigned int DEF_BAUD_RATE = 115200;

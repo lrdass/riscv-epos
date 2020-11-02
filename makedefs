@@ -171,9 +171,9 @@ cortex_IMG_SUFFIX	:= .img
 endif
 
 ifeq ($(MMOD),sifive_e)
-riscv_CC_FLAGS          := 
+riscv_CC_FLAGS          := -Wl, -mno-relax
 riscv_AS_FLAGS          := 
-riscv_LD_FLAGS          := 
+riscv_LD_FLAGS          := --no-relax
 riscv_EMULATOR			= qemu-system-riscv32 -machine virt -cpu rv32gcsu-v1.10.0 -smp $(CPUS) -m $(MEM_SIZE)k -serial mon:stdio -bios none -nographic -no-reboot -kernel 
 riscv_DEBUGGER          := /opt/riscv/bin/riscv32-unknown-linux-gnu-gdb --tui
 riscv_FLASHER           := 
