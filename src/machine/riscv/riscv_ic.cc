@@ -13,8 +13,29 @@ extern "C" { void _reserved() __attribute__ ((alias("_ZN4EPOS1S2IC8reservedEj"))
 extern "C" { void _fiq() __attribute__ ((alias("_ZN4EPOS1S2IC3fiqEj"))); }
 extern "C" { void _exception_handling() __attribute__ ((alias("_ZN4EPOS1S2IC18exception_handlingEv"))); }
 
+
 __BEGIN_SYS
 
+extern "C" void m_trap(unsigned int epc, unsigned int tval,unsigned int cause,unsigned int hart, unsigned int status)
+{
+	// o bit mais significante da causa diz se é uma interrupcao sincrona ou assincrona
+	bool async = false;
+	if (((cause >> 31) & 1) == 1){
+		async = true;
+	} else {
+		async = false;
+	}
+
+	// os 4 bits menos significantes dizem qual foi o tipo de interrupcao
+    unsigned int cause_num = cause & 0xf;
+	if(async) {
+		// o tipo 7 é uma interrupcao de timer
+		if (cause_num == 7) {
+            db<IC>(WRN) << "teste"<< endl;
+		}
+	}
+
+}
 // Class attributes
 IC::Interrupt_Handler IC::_int_vector[IC::INTS];
 

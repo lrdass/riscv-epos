@@ -23,6 +23,7 @@ protected:
     static const unsigned int FREQUENCY = Traits<Timer>::FREQUENCY;
 
     typedef IC_Common::Interrupt_Id Interrupt_Id;
+    typedef unsigned long  Reg32;
 
 public:
     using Timer_Common::Tick;
@@ -86,6 +87,9 @@ public:
 
     static void config(const Hertz & frequency) {
         // IMPLEMENT: set timer to next interrupt
+        volatile Reg32* mtimecmp = reinterpret_cast<Reg32*>(Memory_Map::TIMER_BASE);
+        volatile Reg32* mtime = reinterpret_cast<Reg32*>(Memory_Map::PRIVATE_TIMER_BASE);
+        *mtimecmp = *mtime + frequency;
     }
 
     static Hertz clock() {
