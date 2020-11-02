@@ -112,14 +112,6 @@ public:
         // SEND IPI
     }
 
-    void undefined_instruction();
-    void software_interrupt();
-    void prefetch_abort();
-    void data_abort();
-    void reserved();
-    void fiq();
-    void exception_handling();
-
 private:
     static void dispatch();
 

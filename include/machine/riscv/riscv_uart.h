@@ -135,10 +135,7 @@ public:
     }
 
     bool txd_ok() {
-        unsigned int o = UART_MODEM_STATUS;
-        volatile Reg32 &uart = reinterpret_cast<volatile Reg32 *>(this)[o];
-        //volatile Reg32 *uart = reinterpret_cast<volatile Reg32 *>(UART_BUFFER);
-        return !(uart & TXFF);
+        return (reg(LSR) & THOLD_REG);
     }
 
     bool rxd_full() {
@@ -152,14 +149,6 @@ public:
     bool busy() {
         return false;
     }
-
-    void enable() {}
-    void disable() {}
-
-    void reset() {}
-
-    void loopback(bool flag) {}
-
 
     char get() { while(!rxd_ok()); return rxd(); }
     void put(char c) { while(!txd_ok()); txd(c); }
@@ -194,7 +183,6 @@ public:
 private:
     static void init() {}
     static volatile CPU::Reg8 & reg(unsigned int o) { return reinterpret_cast<volatile CPU::Reg8 *>(Memory_Map::UART_BASE)[o / sizeof(CPU::Reg8)]; }
-    void dlab(bool f) { reg(LINE_CONTROL) = ((reg(LINE_CONTROL) & 0x7f) | (f << 7)); }
 };
 
 __END_SYS
