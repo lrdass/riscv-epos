@@ -42,6 +42,7 @@ public:
     }
     static void poweroff()
     {
+        db<Machine>(WRN) << "Machine::poweroff()" << endl;
         CPU::Reg32 *reset = (CPU::Reg32 *)0x100000;
         reset[0] = 0x5555;
         while (1);
@@ -49,7 +50,7 @@ public:
 
     static void smp_barrier_init(unsigned int n_cpus) {
         db<Machine>(TRC) << "SMP::init()" << endl;
-        // wake up secondary cores
+        // IMPLEMENT
     }
 
     static const UUID & uuid() { return System::info()->bm.uuid; }

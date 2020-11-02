@@ -48,7 +48,7 @@ public:
     private:
         Phy_Addr _phy_addr;
         unsigned int _bytes;
-        RV32_Flags _flags;;
+        RV32_Flags _flags;
     };
 
     // Page Directory

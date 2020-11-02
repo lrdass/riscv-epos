@@ -4,7 +4,6 @@
 #define __riscv_memory_map_h
 
 
-
 #include <system/memory_map.h>
 
 
@@ -14,14 +13,14 @@ struct Memory_Map
 {
     // Physical Memory
     enum {
-        UART_BASE                   = 0x10000000, // UART
-        TIMER_BASE                  = 0x00000000, // timer
-        GPIOA_BASE                  = 0x03000000, // plic
-        RTC_BASE                    = 0x00101000,
+        UART_BASE                   = 0x10000000, // 16550A NS UART
+        TIMER_BASE                  = 0x00000000, // IMPLEMENT 
+        GPIOA_BASE                  = 0x03000000, // gpex_ioport
+        RTC_BASE                    = 0x00101000, // goldfish_rtc
 
-        CLINT_BASE                  = 0x00000000,
-        PLIC_CPU_BASE               = 0x0c000000,
-        PRIVATE_TIMER_BASE          = 0x00000000
+        CLINT_BASE                  = 0x00000000, // IMPLEMENT (Sifive CLINT)
+        PLIC_CPU_BASE               = 0x0c000000, // Sifive PLIC
+        PRIVATE_TIMER_BASE          = 0x00000000  // IMPLEMENT (mtime_base)
     };
 
     // Physical Memory

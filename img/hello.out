@@ -1,6 +1,7 @@
-Segunda Thread criada com tempo menor!
-Primeira Thread criada com tempo maior!
-finished
+Machine::pre_init()
+Hello world!
 The last thread has exited!
 Rebooting the machine ...
 Machine::reboot()
+QEMU: Terminated
+

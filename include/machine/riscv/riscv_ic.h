@@ -14,7 +14,6 @@ class IC: private IC_Common
     friend class Machine;
 
 private:
-    // typedef IC_Engine Engine;
     typedef CPU::Reg32 Reg32;
 
     static const unsigned int INTS = Traits<IC>::INTS;
@@ -22,20 +21,14 @@ public:
     using IC_Common::Interrupt_Id;
     using IC_Common::Interrupt_Handler;
 
-    // MIE interrupt flags
+    // MIE interrupt IDs
     enum {
-        // implement
+        // interrupt IDs
     };
 
-    // MASKS
     enum {
-        // implement
-    };
-
-    // Interrupt IDS
-    enum {
-        INT_SYS_TIMER   = 0,
-        INT_USER_TIMER0 = 0, // it could be 5, if we adopt supervisor execution mode
+        INT_SYS_TIMER   = 0, // IMPLEMENT: FIX this value
+        INT_USER_TIMER0 = 0, // IMPLEMENT: FIX this value
         INT_USER_TIMER1 = 0,
         INT_USER_TIMER2 = 0,
         INT_USER_TIMER3 = 0,
@@ -50,17 +43,12 @@ public:
         INT_USB0        = 0,
         INT_FIRST_HARD  = 0,
         INT_LAST_HARD   = 0,
-        INT_RESCHEDULER = 0
-    };
-
-    // address
-    enum {
-        // implement
+        INT_RESCHEDULER = 0 // IMPLEMENT: FIX this value
     };
 
     // clint offsets
     enum {
-        // implement
+        // CORE WAKEUP OFFSET
     };
 
 public:
@@ -79,26 +67,26 @@ public:
 
     static void enable() {
         db<IC>(TRC) << "IC::enable()" << endl;
-        // enable all interrupts
+        // IMPLEMENT
     }
     static void enable(Interrupt_Id i) {
         db<IC>(TRC) << "IC::enable(int=" << i << ")" << endl;
         assert(i < INTS);
-        // enable interrupt with id = i
+        // IMPLEMENT
     }
 
     static void disable() {
         db<IC>(TRC) << "IC::disable()" << endl;
-        // disable all interrupts
+        // IMPLEMENT
     }
     static void disable(Interrupt_Id i) {
         db<IC>(TRC) << "IC::disable(int=" << i << ")" << endl;
         assert(i < INTS);
-        // disable interrupt with id = i
+        // IMPLEMENT
     }
 
     static Interrupt_Id int_id() {
-        // return interrupt id
+        // IMPLEMENT
         return 0;
     }
 
@@ -109,12 +97,20 @@ public:
     static void ipi(unsigned int cpu, Interrupt_Id i) {
         db<IC>(TRC) << "IC::ipi(cpu=" << cpu << ",int=" << i << ")" << endl;
         assert(i < INTS);
-        // SEND IPI
+        // IMPLEMENT
     }
+
+    static void ipi_eoi(Interrupt_Id i) {
+        // IMPLEMENT
+    }
+
 
 private:
     static void dispatch();
 
+    // Logical handlers
+    static void int_not(Interrupt_Id i);
+    static void hard_fault(Interrupt_Id i);
     static void undefined_instruction(Interrupt_Id i);
     static void software_interrupt(Interrupt_Id i);
     static void prefetch_abort(Interrupt_Id i);
@@ -122,14 +118,9 @@ private:
     static void reserved(Interrupt_Id i);
     static void fiq(Interrupt_Id i);
 
-    // Logical handlers
-    static void int_not(Interrupt_Id i);
-    static void hard_fault(Interrupt_Id i);
-
-    static void exception_handling();  // this is a global exception handler sensitive to mcause
-
     // Physical handler
     static void entry();
+    static void exception_handling();  // this is a global exception handler sensitive to mcause
 
     static void init();
 

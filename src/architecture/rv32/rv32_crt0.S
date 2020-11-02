@@ -1,53 +1,36 @@
+// EPOS RISC-V Program Starter
+
+        .file "rv32_crt0.S"
+
+        // Entry point called by SETUP for processors
         .section .text
         .align  4
         .global _start
         .type   _start, function
 _start:
-        csrr t0, mhartid # reading CSR mhartid
-	bnez t0, 4f
+        // Temporary stack(s) for INIT are created and configure by SETUP
 
-        la   sp, __boot_stack__
-        .option push
-        .option norelax
-	la  gp, __global_pointer$
-        .option pop
-        
-        csrw	satp, zero
-        
-        la a0, __bss_start
-        la a1, _end
-	bgeu a0, a1, 2f
+        // Only hart (core) 0 cleans cache
+        // IMPLEMENT
+
+        // Set all bytes in the BSS section to zero.
+        la      a0, __bss_start
+        la      a1, _end
+        bgeu    a0, a1, 2f
 1:
-        sw	zero, (a0)
-	addi	a0, a0, 4
-	bltu	a0, a1, 1b
-
+        sw      zero, (a0)
+        addi    a0, a0, 4
+        bltu    a0, a1, 1b
 2:
-        # Set all bytes in the BSS section to zero.
-        # la sp, _stack_end
+        // Call _init
+        call      _init
 
-        la      t1, _init
-        csrw	mepc, t1
-        
-        la     t2, _int_entry
-        csrw   mtvec, t2
-
-        la	ra, 4f
-        # implement
-
-        # Call _init
-        mret
-
-        # Call main
+        // Call main
         .align  4
         .globl  __epos_app_entry
         .type   __epos_app_entry, function
-
 __epos_app_entry:
         call      main
-        lw        a0, 0(sp)         # save main's return value to be used by exit()
+        lw        a0, 0(sp)         // save main's return value to be used by exit()
         call      _fini
         call      _exit
-4:
-        wfi
-	j 4b

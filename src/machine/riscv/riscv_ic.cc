@@ -21,9 +21,8 @@ IC::Interrupt_Handler IC::_int_vector[IC::INTS];
 // Class methods
 void IC::entry()
 {
-    // Implement
-        ASM("j _int_entry"); // IMPLEMENT
-
+    // Handle interrupts in machine mode
+    ASM("j _int_entry"); // IMPLEMENT
 }
 
 void IC::dispatch()
@@ -53,7 +52,8 @@ void IC::undefined_instruction(Interrupt_Id i)
     Machine::panic();
 }
 
-void IC::software_interrupt(Interrupt_Id i){
+void IC::software_interrupt(Interrupt_Id i)
+{
     db<IC>(ERR) << "Software interrupt(i=" << i << ")" << endl;
     Machine::panic();
 }
@@ -85,6 +85,7 @@ void IC::fiq(Interrupt_Id i)
 void IC::exception_handling()
 {
     db<IC>(ERR) << "Exception abort" << endl;
+    // IMPLEMENT
     Machine::panic();
 }
 __END_SYS
