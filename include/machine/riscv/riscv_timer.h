@@ -7,6 +7,7 @@
 #include <machine/ic.h>
 #include <machine/timer.h>
 #include <utility/convert.h>
+#include <system/memory_map.h>
 
 __BEGIN_SYS
 
@@ -93,6 +94,7 @@ public:
 
 private:
 
+    static volatile CPU::Reg32 & reg(unsigned int o) { return reinterpret_cast<volatile CPU::Reg32 *>(Memory_Map::CLINT_BASE)[o / sizeof(CPU::Reg32)]; }
 
     static void int_handler(Interrupt_Id i);
 

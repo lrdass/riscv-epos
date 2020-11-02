@@ -34,8 +34,8 @@ public:
 
     // Interrupt IDS
     enum {
-        INT_SYS_TIMER   = 7,
-        INT_USER_TIMER0 = 5, // it could be 5, if we adopt supervisor execution mode
+        INT_SYS_TIMER   = 0,
+        INT_USER_TIMER0 = 0, // it could be 5, if we adopt supervisor execution mode
         INT_USER_TIMER1 = 0,
         INT_USER_TIMER2 = 0,
         INT_USER_TIMER3 = 0,
@@ -121,16 +121,27 @@ public:
     void exception_handling();
 
 private:
-    static void dispatch(unsigned int i);
+    static void dispatch();
+
+    static void undefined_instruction(Interrupt_Id i);
+    static void software_interrupt(Interrupt_Id i);
+    static void prefetch_abort(Interrupt_Id i);
+    static void data_abort(Interrupt_Id i);
+    static void reserved(Interrupt_Id i);
+    static void fiq(Interrupt_Id i);
 
     // Logical handlers
     static void int_not(Interrupt_Id i);
     static void hard_fault(Interrupt_Id i);
 
+    static void exception_handling();  // this is a global exception handler sensitive to mcause
+
     // Physical handler
     static void entry();
 
     static void init();
+
+    static volatile CPU::Reg32 & reg(unsigned int o) { return reinterpret_cast<volatile CPU::Reg32 *>(Memory_Map::CLINT_BASE)[o / sizeof(CPU::Reg32)]; }
 
 private:
     static Interrupt_Handler _int_vector[INTS];

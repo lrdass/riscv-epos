@@ -15,7 +15,7 @@ _start:
         csrw	satp, zero
         
         la a0, __bss_start
-        la a1, __BSS_END__
+        la a1, _end
 	bgeu a0, a1, 2f
 1:
         sw	zero, (a0)
