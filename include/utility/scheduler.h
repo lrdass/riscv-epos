@@ -49,6 +49,7 @@ namespace Scheduling_Criteria
         static const bool timed = false;
         static const bool dynamic = false;
         static const bool preemptive = true;
+        static const bool multiqueue = true;
         static const unsigned int QUEUES = 1;
 
     public:
@@ -74,6 +75,7 @@ namespace Scheduling_Criteria
         static const bool timed = true;
         static const bool dynamic = false;
         static const bool preemptive = true;
+        static const bool multiqueue = true;
 
     public:
         template <typename ... Tn>
@@ -129,6 +131,7 @@ namespace Scheduling_Criteria
         static const bool timed = true;
         static const bool dynamic = false;
         static const bool preemptive = true;
+        static const bool multiqueue = true;
 
         static const unsigned int QUEUES = Traits<Machine>::CPUS;
 
@@ -157,6 +160,21 @@ namespace Scheduling_Criteria
         Microsecond _capacity;
     };
 
+    class FS: public Priority
+    {
+    public:
+        static const bool timed = true;
+        static const bool dynamic = true;
+        static const bool preemptive = true;
+        static const bool multiqueue = true;
+
+    public:
+        template <typename ... Tn>
+        FS(int p = NORMAL, Tn & ... an): Priority(p) {}
+
+        void update();
+    };
+
     // Rate Monotonic
     class RM:public RT_Common
     {
@@ -164,6 +182,7 @@ namespace Scheduling_Criteria
         static const bool timed = false;
         static const bool dynamic = false;
         static const bool preemptive = true;
+        static const bool multiqueue = true;
 
     public:
         RM(int p = APERIODIC): RT_Common(p) {}
@@ -196,6 +215,7 @@ namespace Scheduling_Criteria
         static const bool timed = false;
         static const bool dynamic = false;
         static const bool preemptive = true;
+        static const bool multiqueue = true;
 
     public:
         DM(int p = APERIODIC): RT_Common(p) {}
@@ -210,6 +230,7 @@ namespace Scheduling_Criteria
         static const bool timed = true;
         static const bool dynamic = true;
         static const bool preemptive = true;
+        static const bool multiqueue = true;
 
     public:
         EDF(int p = APERIODIC): RT_Common(p) {}
@@ -329,8 +350,8 @@ public:
     	// For threads, we assume this won't happen (see Init_First).
     	// But if you are unsure about your new use of the scheduler,
     	// please, pay the price of the extra "if" bellow.
-//    	return const_cast<T * volatile>((Base::chosen()) ? Base::chosen()->object() : 0);
-    	return const_cast<T * volatile>(Base::chosen()->object());
+   	    return const_cast<T * volatile>((Base::chosen()) ? Base::chosen()->object() : 0);
+    	// return const_cast<T * volatile>(Base::chosen()->object());
     }
 
     void insert(T * obj) {

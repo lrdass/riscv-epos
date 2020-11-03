@@ -27,6 +27,7 @@ namespace Scheduling_Criteria
 {
     class Priority;
     class FCFS;
+    class FS;
     class RR;
     class RM;
     class DM;

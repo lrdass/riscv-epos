@@ -15,16 +15,18 @@ __BEGIN_SYS
 volatile unsigned int Thread::_thread_count;
 Scheduler_Timer * Thread::_timer;
 Scheduler<Thread> Thread::_scheduler;
+Scheduler<Thread> Thread::_scheduler_medium;
+Scheduler<Thread> Thread::_scheduler_low;
 
 
 // Methods
 void Thread::constructor_prologue(unsigned int stack_size)
 {
     lock();
-
-    _thread_count++;
+ 
     _scheduler.insert(this);
-
+    _thread_count++;
+    shame_level = 0;
     _stack = new (SYSTEM) char[stack_size];
 }
 
@@ -302,8 +304,29 @@ void Thread::reschedule()
     // lock() must be called before entering this method
     assert(locked());
 
-    Thread * prev = running();
-    Thread * next = _scheduler.choose();
+    Thread * prev;
+    Thread * next;
+    if(Criterion::multiqueue){
+        prev = running();
+        next = _scheduler.choose();
+        
+        if(!prev){
+            prev = running_medium();
+        }
+        if(!prev){
+            prev = running_low();
+        }
+ 
+        if(!next){
+            next = _scheduler_medium.choose();
+        }
+        if(!next){
+            next = _scheduler_low.choose();
+        }
+    }else{
+        prev = running();
+        next = _scheduler.choose();
+    }
 
     dispatch(prev, next);
 }
@@ -311,8 +334,24 @@ void Thread::reschedule()
 
 void Thread::time_slicer(IC::Interrupt_Id i)
 {
+    db<Thread>(WRN) << "::TIME SLICER" << endl;
     lock();
-
+    // if(Criterion::multiqueue){
+    //     Thread * prev = running();
+    //     if(!prev){
+    //         prev = running_medium();
+    //     }
+    //     if(!prev){
+    //         prev = running_low();
+    //     }
+    //     if(prev->shame_level == 1){
+    //         _scheduler_low.insert(prev);
+    //         prev->shame_level++;
+    //     }else if(prev->shame_level == 0){
+    //         _scheduler_medium.insert(prev);
+    //         prev->shame_level++;
+    //     }
+    // }
     reschedule();
 }
 
@@ -350,6 +389,7 @@ int Thread::idle()
     while(_thread_count > 1) { // someone else besides idle
         if(Traits<Thread>::trace_idle)
             db<Thread>(TRC) << "Thread::idle(this=" << running() << ")" << endl;
+            
 
         CPU::int_enable();
         CPU::halt();

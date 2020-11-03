@@ -10,16 +10,27 @@ typedef unsigned int Reg32;
 
 
 int func1(){
-    cout << "th1" << endl;
+    while(1){
+        cout << "Func1 \n" << endl;
+        Alarm::delay(10000);
+    }
+    return 0;
+}
 
-    Delay time(1000000);
+int func2(){
+    while(1){
+        cout << "Func2 \n" << endl;
+        Alarm::delay(20000);
+    }
     return 0;
 }
 
 int main()
 {
     Thread * thread = new Thread(&func1);
+    Thread * thread2 = new Thread(&func2);
     thread->join();
+    thread2->join();
     
     return 0;
 }
