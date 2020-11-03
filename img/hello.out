@@ -1,3 +1,21 @@
 Machine::pre_init()
+Initializing the CPU: 
+MMU::init::dat.e=0x80004000,bss.b=0x80004000,bss.e=0x8000412c
+done!
+Initializing system's heap: 
+done!
+Initializing the machine: 
+Machine::init()
+Timer::init()
+done!
+Initializing system abstractions: 
+done!
+Randomizing the Random Numbers Generator's seed: 
+done!
+Initializing application's heap: 
+done!
+INIT ends here!
+Dispatching the first thread: 0x87ffbfc4
+Hello world!
 QEMU: Terminated
 

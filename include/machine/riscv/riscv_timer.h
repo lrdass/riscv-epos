@@ -94,9 +94,7 @@ public:
 
     static void config(const Hertz & frequency) {
         // IMPLEMENT: set timer to next interrupt
-        volatile Reg32* mtimecmp = reinterpret_cast<Reg32*>(Memory_Map::TIMER_BASE);
-        volatile Reg32* mtime = reinterpret_cast<Reg32*>(Memory_Map::PRIVATE_TIMER_BASE);
-        *mtimecmp = *mtime + frequency;
+        reg(MTIMECMP) = reg(MTIME) + frequency;
     }
 
     static Hertz clock() {
