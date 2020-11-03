@@ -20,7 +20,7 @@ struct Memory_Map
 
         CLINT_BASE                  = 0x02000000, // IMPLEMENT (Sifive CLINT)
         PLIC_CPU_BASE               = 0x0c000000, // Sifive PLIC
-        PRIVATE_TIMER_BASE          = 0x0000bff8  // IMPLEMENT (mtime_base)
+        PRIVATE_TIMER_BASE          = 0x0200bff8  // IMPLEMENT (mtime_base)
     };
 
     // Physical Memory
