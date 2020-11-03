@@ -37,12 +37,7 @@ public:
 
     // Registers offsets from CLINT_BASE
     enum {
-        /**
-        Address         Description     Note
-        BASE + 0x0      msip            Machine mode software interrupt (IPI)
-        BASE + 0x4000   mtimecmp        Machine mode timer compare register for Hart 0
-        BASE + 0xBFF8   mtime           Timer register
-        **/
+        // offset from clint
         MTIMECMP        = 0X00004000,
         MTIME           = 0x0000BFF8
     };
@@ -93,7 +88,7 @@ public:
     void handler(const Handler & handler) { _handler = handler; }
 
     static void config(const Hertz & frequency) {
-        // IMPLEMENT: set timer to next interrupt
+        //mtimecmp = mtime + clcok
         reg(MTIMECMP) = reg(MTIME) + frequency;
     }
 
