@@ -94,9 +94,6 @@ void Alarm::delay(const Microsecond & time)
 void Alarm::handler(IC::Interrupt_Id i)
 {
     lock();
-
-    db<Alarm>(WRN) << "::ELAPSED" << _elapsed << endl;
-    db<Alarm>(TRC) << "::ELAPSED" << _elapsed << endl;
     _elapsed++;
 
     if(Traits<Alarm>::visible) {

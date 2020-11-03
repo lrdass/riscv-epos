@@ -176,7 +176,7 @@ namespace Scheduling_Criteria
     };
 
     // Rate Monotonic
-    class RM:public RT_Common
+    class RM: public RT_Common
     {
     public:
         static const bool timed = false;

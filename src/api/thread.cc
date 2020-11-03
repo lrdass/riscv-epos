@@ -299,7 +299,7 @@ void Thread::wakeup_all(Queue * q)
 
 void Thread::reschedule()
 {
-    db<Thread>(TRC) << "Thread::reschedule()" << endl;
+    // db<Thread>(WRN) << "Thread::reschedule()" << endl;
 
     // lock() must be called before entering this method
     assert(locked());
@@ -334,24 +334,24 @@ void Thread::reschedule()
 
 void Thread::time_slicer(IC::Interrupt_Id i)
 {
-    db<Thread>(WRN) << "::TIME SLICER" << endl;
+    
     lock();
-    // if(Criterion::multiqueue){
-    //     Thread * prev = running();
-    //     if(!prev){
-    //         prev = running_medium();
-    //     }
-    //     if(!prev){
-    //         prev = running_low();
-    //     }
-    //     if(prev->shame_level == 1){
-    //         _scheduler_low.insert(prev);
-    //         prev->shame_level++;
-    //     }else if(prev->shame_level == 0){
-    //         _scheduler_medium.insert(prev);
-    //         prev->shame_level++;
-    //     }
-    // }
+    if(Criterion::multiqueue){
+        Thread * prev = running();
+        if(!prev){
+            prev = running_medium();
+        }
+        if(!prev){
+            prev = running_low();
+        }
+        if(prev->shame_level == 1){
+            _scheduler_low.insert(prev);
+            prev->shame_level++;
+        }else if(prev->shame_level == 0){
+            _scheduler_medium.insert(prev);
+            prev->shame_level++;
+        }
+    }
     reschedule();
 }
 
