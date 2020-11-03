@@ -36,8 +36,15 @@ public:
     };
 
     // Registers offsets from CLINT_BASE
-    enum {                                // Description
-        // IMPLEMENT
+    enum {
+        /**
+        Address         Description     Note
+        BASE + 0x0      msip            Machine mode software interrupt (IPI)
+        BASE + 0x4000   mtimecmp        Machine mode timer compare register for Hart 0
+        BASE + 0xBFF8   mtime           Timer register
+        **/
+        MTIMECMP        = 0X00004000,
+        MTIME           = 0x0000BFF8
     };
 
     static const Hertz CLOCK = Traits<Machine>::TIMER_CLOCK;
