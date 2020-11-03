@@ -50,7 +50,7 @@ public:
 
     // address
     enum {
-        ALL_BITS = 0xffffffff
+        CLEAR_REG = 0xffffffff
     };
 
 public:
@@ -69,17 +69,13 @@ public:
 
     static void enable() {
         db<IC>(INF) << "IC::enable()" << endl;
-        // enable all interrupts
         CPU::Reg32 m;
-        ASM("csrrc %0, mie, %1"
-                     : "=r"(m)
-                     : "r"(_old_state));
+        ASM("csrrc %0, mie, %1" : "=r"(m): "r"(_prev_int));
     }
 
     static void enable(Interrupt_Id i) {
         db<IC>(INF) << "IC::enable(int=" << i << ")" << endl;
         assert(i < INTS);
-        // enable interrupt with id = i
         CPU::Reg32 b = 1 << i;
         CPU::Reg32 m;
         ASM("csrrs %0, mie, %1" : "=r"(m) : "r"(b));
@@ -87,22 +83,17 @@ public:
 
     static void disable() {
         db<IC>(TRC) << "IC::disable()" << endl;
-        // disable all interrupts
-        ASM("csrrc %0, mie, %1"
-                     : "=r"(_old_state)
-                     : "r"(ALL_BITS));
+        ASM("csrrc %0, mie, %1" : "=r"(_prev_int) : "r"(CLEAR_REG));
     }
     static void disable(Interrupt_Id i) {
         db<IC>(TRC) << "IC::disable(int=" << i << ")" << endl;
         assert(i < INTS);
-        // disable interrupt with id = i
         CPU::Reg32 b = 1 << i;
         CPU::Reg32 m;
         ASM("csrrc %0, mie, %1" : "=r"(m) : "r"(b));
     }
 
     static Interrupt_Id int_id() {
-        // return interrupt id
         db<IC>(INF) << "int " << endl;
         CPU::Reg32 mcause;
         ASM("csrr %0, mcause" : "=r"(mcause));
@@ -148,7 +139,7 @@ private:
     static volatile CPU::Reg32 & reg(unsigned int o) { return reinterpret_cast<volatile CPU::Reg32 *>(Memory_Map::CLINT_BASE)[o / sizeof(CPU::Reg32)]; }
 
 private:
-    static CPU::Reg32 _old_state;
+    static CPU::Reg32 _prev_int;
     static Interrupt_Handler _int_vector[INTS];
 };
 

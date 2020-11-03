@@ -38,10 +38,11 @@ extern "C" void m_trap(unsigned int epc, unsigned int tval,unsigned int cause,un
 }
 // Class attributes
 IC::Interrupt_Handler IC::_int_vector[IC::INTS];
-CPU::Reg32 IC::_old_state;
+CPU::Reg32 IC::_prev_int;
 // Class methods
 void IC::entry()
 {
+    // save context and jump to dispatch
      ASM(
         "addi       sp, sp, -64            \n"
         "sw         ra, 0(sp)              \n"

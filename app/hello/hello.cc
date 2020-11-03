@@ -1,13 +1,25 @@
-#include <machine.h>
+// EPOS Alarm Component Test Program
+
 #include <time.h>
-#include <synchronizer.h>
-#include <process.h>
 
 using namespace EPOS;
 
-OStream cout;
-typedef unsigned int Reg32;
+const int iterations = 10;
 
+void func_a(void);
+void func_b(void);
+
+OStream cout;
+
+int main()
+{
+    cout << "Alarm test" << endl;
+
+    cout << "I'm the first thread of the first task created in the system." << endl;
+    cout << "I'll now create two alarms and put myself in a delay ..." << endl;
+
+    Function_Handler handler_a(&func_a);
+    Alarm alarm_a(2000000, &handler_a, iterations);
 
 int func1(){
     while(1){
@@ -25,7 +37,7 @@ int func2(){
     return 0;
 }
 
-int main()
+void func_a()
 {
     Thread * thread = new Thread(&func1);
     Thread * thread2 = new Thread(&func2);
