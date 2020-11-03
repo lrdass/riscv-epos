@@ -1,10 +1,3 @@
 Machine::pre_init()
-Assertion fail: i < INTS, function=static void EPOS::S::IC::int_vector(EPOS::S::
-IC_Common::Interrupt_Id, void (* const&)(EPOS::S::IC_Common::Interrupt_Id)), fil
-e=/home/lrdass/Workspace/ufsc/so2/riscv-epos/include/machine/riscv/riscv_ic.h, l
-ine=64
-Assertion fail: i < INTS, function=static void EPOS::S::IC::enable(EPOS::S::IC_C
-ommon::Interrupt_Id), file=/home/lrdass/Workspace/ufsc/so2/riscv-epos/include/ma
-chine/riscv/riscv_ic.h, line=74
 QEMU: Terminated
 
