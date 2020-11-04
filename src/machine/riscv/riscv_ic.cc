@@ -91,7 +91,7 @@ void IC::dispatch()
     Interrupt_Id id = int_id();
 
     if((id != INT_SYS_TIMER) || Traits<IC>::hysterically_debugged)
-        db<IC>(TRC) << "IC::dispatch(i=" << id << ")" << endl;
+        db<IC>(INF) << "IC::dispatch(i=" << id << ")" << endl;
 
     _int_vector[id](id);
 }
