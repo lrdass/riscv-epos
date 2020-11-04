@@ -344,6 +344,7 @@ void Thread::time_slicer(IC::Interrupt_Id i)
         if(!prev){
             prev = running_low();
         }
+
         if(prev->shame_level == 1){
             _scheduler_low.insert(prev);
             prev->shame_level++;

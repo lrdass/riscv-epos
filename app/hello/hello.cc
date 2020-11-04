@@ -7,50 +7,49 @@
 using namespace EPOS;
 
 OStream cout;
-int worker(int delay){
+
+int fast_job(int delay){
     int counter = 0;
-    while(counter < 3){
-
+    while(counter < 2){
         cout << "Thread 1 => Working\n";
-
-            
-        Delay working(delay);
+        // Delay working(delay);
         counter++;
+        cout << "Thread 1 Used => " << delay*counter << "us \n";
     }
     cout << "Thread 1 => Finished\n";
 
     return 0;
 }
 
-int worker2(int delay){
+int slow_job(int delay){
     int counter = 0;
     while(counter < 3){
-
         cout << "Thread 2 => Working\n";
-
-            
-        Delay working(delay);
+        // Delay working(delay);
         counter++;
+        cout << "Thread 2 Used => " << delay*counter << "us \n";
     }
     cout << "Thread 2 => Finished\n";
+    cout << "Teste Feedback Scheduler Completo!" << endl;
 
     return 0;
 }
 
-int worker3(int delay){
+int fast_long_job(int delay){
     int counter = 0;
-    while(counter < 3){
+    while(counter < 6){
 
         cout << "Thread 3 => Working\n";
-
-            
-        Delay working(delay);
+        // Delay working(delay);
         counter++;
+        cout << "Thread 3 Used => " << delay*counter << "us \n";
     }
     cout << "Thread 3 => Finished\n";
 
     return 0;
 }
+
+
 
 const int iterations = 10;
 
@@ -59,10 +58,7 @@ void func_b(void);
 
 int main()
 {
-    cout << "Alarm test" << endl;
-
-    cout << "I'm the first thread of the first task created in the system." << endl;
-    cout << "I'll now create two alarms and put myself in a delay ..." << endl;
+    cout << "Teste Alarme" << endl;
 
     Function_Handler handler_a(&func_a);
     Alarm alarm_a(2000000, &handler_a, iterations);
@@ -75,14 +71,15 @@ int main()
     // of the idle thread!
     Alarm::delay(2000000 * (iterations + 2));
 
-    cout << "I'm done, bye!" << endl;
+    cout << "Teste Alarme Completo" << endl;
 
 
 
-    cout << "Hello world!" << endl;
-    Thread* t1 = new Thread(&worker, 2000);
-    Thread* t2 = new Thread(&worker2, 1000000);
-    Thread* t3 = new Thread(&worker3, 50000);    
+
+    cout << "Teste Feedback Scheduler" << endl;
+    Thread* t1 = new Thread(&fast_job, 15000); // TOTAL 8000
+    Thread* t2 = new Thread(&slow_job, 15000); // TOTAL 27000
+    // Thread* t3 = new Thread(&fast_long_job, 4000);  // TOTAL = 24000
     
     return 0;
 }
