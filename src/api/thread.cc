@@ -102,7 +102,7 @@ void Thread::priority(const Priority & c)
 {
     lock();
 
-    db<Thread>(TRC) << "Thread::priority(this=" << this << ",prio=" << c << ")" << endl;
+    db<Thread>(INF) << "Thread::priority(this=" << this << ",prio=" << c << ")" << endl;
 
     _link.rank(Criterion(c));
 
@@ -299,7 +299,7 @@ void Thread::wakeup_all(Queue * q)
 
 void Thread::reschedule()
 {
-    // db<Thread>(WRN) << "Thread::reschedule()" << endl;
+    db<Thread>(INF) << "Thread::reschedule()" << endl;
 
     // lock() must be called before entering this method
     assert(locked());

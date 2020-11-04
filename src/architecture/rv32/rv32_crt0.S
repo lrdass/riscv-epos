@@ -1,6 +1,5 @@
 // EPOS RISC-V Program Starter
  .file "rv32_crt0.S"
-
         // Entry point called by SETUP for processors
         .section .text
         .align  4
