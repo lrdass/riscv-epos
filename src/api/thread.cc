@@ -15,18 +15,16 @@ __BEGIN_SYS
 volatile unsigned int Thread::_thread_count;
 Scheduler_Timer * Thread::_timer;
 Scheduler<Thread> Thread::_scheduler;
-Scheduler<Thread> Thread::_scheduler_medium;
-Scheduler<Thread> Thread::_scheduler_low;
 
 
 // Methods
 void Thread::constructor_prologue(unsigned int stack_size)
 {
     lock();
- 
-    _scheduler.insert(this);
+
     _thread_count++;
-    shame_level = 0;
+    _scheduler.insert(this);
+
     _stack = new (SYSTEM) char[stack_size];
 }
 
@@ -102,7 +100,7 @@ void Thread::priority(const Priority & c)
 {
     lock();
 
-    db<Thread>(INF) << "Thread::priority(this=" << this << ",prio=" << c << ")" << endl;
+    db<Thread>(TRC) << "Thread::priority(this=" << this << ",prio=" << c << ")" << endl;
 
     _link.rank(Criterion(c));
 
@@ -299,34 +297,14 @@ void Thread::wakeup_all(Queue * q)
 
 void Thread::reschedule()
 {
-    db<Thread>(INF) << "Thread::reschedule()" << endl;
+    if(!Criterion::timed || Traits<Thread>::hysterically_debugged)
+        db<Thread>(TRC) << "Thread::reschedule()" << endl;
 
     // lock() must be called before entering this method
     assert(locked());
 
-    Thread * prev;
-    Thread * next;
-    if(Criterion::multiqueue){
-        prev = running();
-        next = _scheduler.choose();
-        
-        if(!prev){
-            prev = running_medium();
-        }
-        if(!prev){
-            prev = running_low();
-        }
- 
-        if(!next){
-            next = _scheduler_medium.choose();
-        }
-        if(!next){
-            next = _scheduler_low.choose();
-        }
-    }else{
-        prev = running();
-        next = _scheduler.choose();
-    }
+    Thread * prev = running();
+    Thread * next = _scheduler.choose();
 
     dispatch(prev, next);
 }
@@ -334,25 +312,8 @@ void Thread::reschedule()
 
 void Thread::time_slicer(IC::Interrupt_Id i)
 {
-    
     lock();
-    if(Criterion::multiqueue){
-        Thread * prev = running();
-        if(!prev){
-            prev = running_medium();
-        }
-        if(!prev){
-            prev = running_low();
-        }
 
-        if(prev->shame_level == 1){
-            _scheduler_low.insert(prev);
-            prev->shame_level++;
-        }else if(prev->shame_level == 0){
-            _scheduler_medium.insert(prev);
-            prev->shame_level++;
-        }
-    }
     reschedule();
 }
 
@@ -387,10 +348,11 @@ void Thread::dispatch(Thread * prev, Thread * next, bool charge)
 
 int Thread::idle()
 {
+    db<Thread>(TRC) << "Thread::idle(this=" << running() << ")" << endl;
+
     while(_thread_count > 1) { // someone else besides idle
         if(Traits<Thread>::trace_idle)
             db<Thread>(TRC) << "Thread::idle(this=" << running() << ")" << endl;
-            
 
         CPU::int_enable();
         CPU::halt();
@@ -420,4 +382,5 @@ volatile CPU::Reg This_Thread::id()
 {
     return _not_booting ? CPU::Reg(Thread::self()) : CPU::Reg(CPU::id() + 1);
 }
+
 __END_UTIL

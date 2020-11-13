@@ -19,15 +19,9 @@ private:
     static const unsigned int ACCURACY = 40000; // this is actually unknown at the moment
 
     // Registers offsets from CLINT_BASE
-    enum {
-        /**
-        Address         Description     Note
-        BASE + 0x0      msip            Machine mode software interrupt (IPI)
-        BASE + 0x4000   mtimecmp        Machine mode timer compare register for Hart 0
-        BASE + 0xBFF8   mtime           Timer register
-        **/
-        MTIMECMP        = 0X00004000,
-        MTIME           = 0x0000BFF8
+    enum {               // Description
+        MTIME  = 0xbff8, // Counter (lower 32 bits)
+        MTIMEH = 0xbffc  // Counter (upper 32 bits)
     };
 
 public:
@@ -41,10 +35,7 @@ public:
     static Hertz frequency() { return CLOCK; }
     static PPB accuracy() { return ACCURACY; }
 
-    static Time_Stamp time_stamp() { 
-        // IMPLEMENT
-        return CPU::Reg64(0);
-    }
+    static Time_Stamp time_stamp() { return (CPU::Reg64(reg(MTIMEH)) << 32) | reg(MTIME); }
 
 private:
     static void init() {}
