@@ -29,8 +29,11 @@ void Machine::init()
 {
     db<Init, Machine>(TRC) << "Machine::init()" << endl;
 
-    if(Traits<Timer>::enabled)
+    if(Traits<Timer>::enabled){
+         CPU::smp_barrier();
         Timer::init();
+
+    }
 }
 
 __END_SYS
