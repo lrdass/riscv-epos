@@ -10,6 +10,7 @@ void Machine::pre_init(System_Info * si)
         Display::init();
 
     db<Init>(WRN) << "Machine::pre_init()" << endl;
+
     db<Init, Machine>(TRC) << "Machine::pre_init()" << endl;
 
     if(CPU::id() == 0) {
@@ -17,6 +18,7 @@ void Machine::pre_init(System_Info * si)
             IC::init();
 
             // Wake up remaining CPUs
+            // si->bm.n_cpus = Traits<Build>::CPUS;
             if(Traits<System>::multicore)
                 smp_barrier_init(Traits<Build>::CPUS);
         }
@@ -26,10 +28,9 @@ void Machine::pre_init(System_Info * si)
 void Machine::init()
 {
     db<Init, Machine>(TRC) << "Machine::init()" << endl;
-// core inicializacao
-// display init -> uart
-    // if(Traits<Timer>::enabled)
-    //     Timer::init();
+
+    if(Traits<Timer>::enabled)
+        Timer::init();
 }
 
 __END_SYS

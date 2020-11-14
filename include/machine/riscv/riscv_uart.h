@@ -22,12 +22,7 @@ private:
     static const unsigned int PARITY = Traits<UART>::DEF_PARITY;
     static const unsigned int STOP_BITS = Traits<UART>::DEF_STOP_BITS;
 
-    // conferir
-    static const unsigned int CLOCK = Traits<UART>::CLOCK;
-
-    // typedef UART_Engine Engine;
-
-    // uart offsets
+    // UART registers offsets from UART_BASE
     enum {
         DIV_LSB         = 0,
         TXD             = 0,
@@ -41,6 +36,7 @@ private:
         LSR             = 5
     };
 
+    // Useful bits from multiple registers
     enum {
         DATA_READY          = 1 << 0,
         THOLD_REG           = 1 << 5,
@@ -65,7 +61,6 @@ public:
         config(baud_rate, data_bits, parity, stop_bits);
     }
 
-    // Baseado no include/machine/pc_uart.h
     void config(unsigned int baud_rate, unsigned int data_bits, unsigned int parity, unsigned int stop_bits)
     {
         // 0x3 for 8, 0x2 for 7, 0x1 for 6 and default (0x0) is 5 bits
@@ -120,34 +115,29 @@ public:
         *stop_bits = (Reg32(reg(LCR) & STOP_BITS_MASK) >> STOP_BITS_MASK) + 1;
     }
 
-
-    Reg8 rxd() {
+    Reg8 rxd() { 
         return reg(RXD);
     }
-
-    // transmit data
-    void txd(Reg8 c) {
+    void txd(Reg8 c) { 
         reg(TXD) = c;
     }
 
-    bool rxd_ok() {
-        return (reg(LSR) & DATA_READY);
+    bool rxd_ok() { 
+        return (reg(LSR) & DATA_READY); 
     }
 
-    bool txd_ok() {
+    bool txd_ok() { 
         return (reg(LSR) & THOLD_REG);
     }
 
-    bool rxd_full() {
-        return false;
-    }
-
-    bool txd_empty() {
-        return (reg(LSR) & TEMPTY_REG);
+    bool rxd_full() { return false; } //still not defined
+    
+    bool txd_empty() { 
+        return (reg(LSR) & TEMPTY_REG); 
     }
 
     bool busy() {
-        return false;
+        return false; // not applicable
     }
 
     char get() { while(!rxd_ok()); return rxd(); }
@@ -175,13 +165,14 @@ public:
         Reg8 mask = 0xff;
         mask -= LOOPBACK_MASK;
         mask += (flag << 4); // if 1, restore flag, else make it disable loopback
-        reg(MCR) = reg(MCR) & mask;
+        reg(MCR) = reg(MCR) & mask; 
     }
 
     void power(const Power_Mode & mode) {}
 
 private:
     static void init() {}
+
     static volatile CPU::Reg8 & reg(unsigned int o) { return reinterpret_cast<volatile CPU::Reg8 *>(Memory_Map::UART_BASE)[o / sizeof(CPU::Reg8)]; }
 };
 
