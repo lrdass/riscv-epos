@@ -59,7 +59,9 @@ public:
 
     // clint offsets
     enum {
-        // CORE WAKEUP OFFSET
+        // From: 3.1.9 - Machine Interrupt Registers (mipandmie) - RISCV Privileged Spec
+        // The standard portions (bits 15:0) of registers mip and mie are formatted as shown in Figures 3.14 and 3.15 respectively
+        MSIP_OFFSET = 4,
     };
 
 public:
@@ -131,11 +133,13 @@ public:
     static void ipi(unsigned int cpu, Interrupt_Id i) {
         db<IC>(TRC) << "IC::ipi(cpu=" << cpu << ",int=" << i << ")" << endl;
         assert(i < INTS);
-        // IMPLEMENT
+        // Set interrupt identifier (i) at MSIP
+        reg(cpu*MSIP_OFFSET) = 0x1 << i;
     }
 
     static void ipi_eoi(Interrupt_Id i) {
-        // IMPLEMENT
+        // Clean up MSIP for the CPU id
+        reg(MSIP_OFFSET*CPU::id()) = 0;
     }
 
 
