@@ -1,5 +1,3 @@
 Machine::pre_init()
 Machine::pre_init()
-MMU::alloc() failed!
-QEMU: Terminated
-
+Machine::pre_init()

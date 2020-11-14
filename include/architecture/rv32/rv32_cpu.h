@@ -170,20 +170,24 @@ public:
 
 
     // Atomic operations
-        template<typename T>
+    template<typename T>
     static T finc(volatile T & value) {
         register T old;
-        register T one = 1;
-        ASM(" amoadd.w %0, %1, (%2)   \n" : "=r"(old): "r"(one), "r"(value) : "t0", "cc");
-        return old;
+        ASM("1: lr.w    %0, (%1)        \n"
+            "   addi    %0, %0, 1       \n"
+            "   sc.w    t0, %0, (%1)    \n"
+            "   bnez    t0, 1b          \n" : "=&r"(old) : "r"(&value) : "t0", "cc", "memory");
+        return old - 1;
     }
 
     template<typename T>
     static T fdec(volatile T & value) {
         register T old;
-        register T one = -1;
-        ASM(" amoadd.w %0, %1, (%2)   \n" : "=r"(old): "r"(one), "r"(value) : "t0", "cc");
-        return old;
+        ASM("1: lr.w    %0, (%1)        \n"
+            "   addi    %0, %0, -1      \n"
+            "   sc.w    t0, %0, (%1)    \n"
+            "   bnez    t0, 1b          \n" : "=&r"(old) : "r"(&value) : "t0", "cc", "memory");
+        return old + 1;
     }
 
     template<typename T>
@@ -192,7 +196,7 @@ public:
         register T one = 1;
         ASM("1: lr.w %0, (%1)       \n"
             "   sc.w t0, %2, (%1)   \n"
-            "   bnez t0, 1b         \n" : "=&r"(old) : "r"(lock), "r"(one) : "t0", "cc");
+            "   bnez t0, 1b         \n" : "=&r"(old) : "r"(lock), "r"(one) : "t0", "cc", "memory");
         return old;
     }
 
@@ -203,7 +207,7 @@ public:
             "   bne     %0, %2, f2      \n"
             "   sc.w    t0, %3, (%1)    \n"
             "   bnez    t0, 1b          \n"
-            "2:                         \n" : "=&r"(old) : "r"(value), "r"(compare), "r"(replacement) : "t0", "cc");
+            "2:                         \n" : "=&r"(old) : "r"(value), "r"(compare), "r"(replacement) : "t0", "cc", "memory");
         return old;
     }
 
