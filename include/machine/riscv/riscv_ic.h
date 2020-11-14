@@ -133,13 +133,17 @@ public:
     static void ipi(unsigned int cpu, Interrupt_Id i) {
         db<IC>(TRC) << "IC::ipi(cpu=" << cpu << ",int=" << i << ")" << endl;
         assert(i < INTS);
-        // Set interrupt identifier (i) at MSIP
-        reg(cpu*MSIP_OFFSET) = 0x1 << i;
+        // um processo interrompe os outros
+        volatile unsigned int *msip = reinterpret_cast<unsigned int*>(Memory_Map::CLINT_BASE | cpu << 2);
+
+        *msip = *msip | 1 << i;
     }
 
     static void ipi_eoi(Interrupt_Id i) {
-        // Clean up MSIP for the CPU id
-        reg(MSIP_OFFSET*CPU::id()) = 0;
+        // end of interrupt - zerar o mcause
+        volatile unsigned int *msip = reinterpret_cast<unsigned int*>(Memory_Map::CLINT_BASE | CPU::id() << 2);
+        *msip = 0;
+        ASM("    csrw   mcause, zero \n");
     }
 
 
