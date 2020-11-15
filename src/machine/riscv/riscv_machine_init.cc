@@ -27,12 +27,10 @@ void Machine::pre_init(System_Info * si)
 
 void Machine::init()
 {
-    db<Init, Machine>(TRC) << "Machine::init()" << endl;
+    db<Init, Machine>(WRN) << "Machine::init()" << endl;
 
     if(Traits<Timer>::enabled){
-         CPU::smp_barrier();
         Timer::init();
-
     }
 }
 

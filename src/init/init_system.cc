@@ -17,7 +17,6 @@ public:
     Init_System() {
         db<Init>(TRC) << "Init_System()" << endl;
 
-        CPU::smp_barrier();
         // Initialize the processor
         if(CPU::id() != 0){
             CPU::smp_barrier();
@@ -42,11 +41,11 @@ public:
         db<Init>(INF) << "done!" << endl;
 
         // Initialize the machine
-        db<Init>(INF) << "Initializing the machine: " << endl;
+        db<Init>(WRN) << "Initializing the machine: " << endl;
         Machine::init();
-        db<Init>(INF) << "done!" << endl;
+        db<Init>(WRN) << "done!" << endl;
         
-        CPU::smp_barrier();
+        // CPU::smp_barrier();
         // Initialize system abstractions
         db<Init>(INF) << "Initializing system abstractions: " << endl;
         System::init();

@@ -11,7 +11,6 @@ public:
     Init_First() {
         db<Init>(TRC) << "Init_First()" << endl;
 
-        CPU::smp_barrier();
 
         if(!Traits<System>::multithread) {
             CPU::int_enable();
