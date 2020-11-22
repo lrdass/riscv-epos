@@ -43,14 +43,14 @@ public:
         } else
             System::_heap = new (&System::_preheap[0]) Heap(MMU::alloc(MMU::pages(HEAP_SIZE)), HEAP_SIZE);
 
-        db<Init>(INF) << "done!" << endl;
+        db<Init>(WRN) << "done!" << endl;
 
         // Initialize the machine
-        db<Init>(INF) << "Initializing the machine: " << endl;
+        db<Init>(WRN) << "Initializing the machine: " << endl;
         Machine::init();
         db<Init>(INF) << "done!" << endl;
 
-        CPU::smp_barrier(); // signalizes "machine ready" to other CPUs
+        CPU::smp_barrier();
 
         // Initialize system abstractions
         db<Init>(INF) << "Initializing system abstractions: " << endl;

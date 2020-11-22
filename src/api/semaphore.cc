@@ -22,8 +22,9 @@ void Semaphore::p()
 
     begin_atomic();
     if(fdec(_value) < 1)
-        sleep();
-    end_atomic();
+        sleep(); // implicit end_atomic()
+    else
+        end_atomic();
 }
 
 
@@ -33,8 +34,9 @@ void Semaphore::v()
 
     begin_atomic();
     if(finc(_value) < 0)
-        wakeup();
-    end_atomic();
+        wakeup();  // implicit end_atomic()
+    else
+        end_atomic();
 }
 
 __END_SYS
