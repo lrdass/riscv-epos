@@ -7,6 +7,7 @@ SUBDIRS	:= etc tools src app img
 all: FORCE
 ifndef APPLICATION
 		$(foreach app,$(APPLICATIONS),$(MAKE) APPLICATION=$(app) $(PRECLEAN) prebuild_$(app) all1 posbuild_$(app);)
+		$(MAKE) clean1
 else
 		$(MAKE) all1
 endif
@@ -18,25 +19,28 @@ $(SUBDIRS): FORCE
 
 run: FORCE
 ifndef APPLICATION
-		$(foreach app,$(APPLICATIONS),$(MAKE) APPLICATION=$(app) prerun_$(app) run1;)
+		$(foreach app,$(APPLICATIONS),$(MAKE) APPLICATION=$(app) $(PRECLEAN) prerun_$(app) run1;)
 else
 		$(MAKE) run1
 endif
 
-run1: etc img/$(APPLICATION)$(MACH_IMGSUFF)
+run1: img/$(APPLICATION)$(MACH_IMGSUFF)
 		(cd img && $(MAKE) run1)
 		
 img/$(APPLICATION)$(MACH_IMGSUFF):
 		$(MAKE) $(PRECLEAN) all1
 		
+runall: FORCE
+		(cd img && $(MAKE) runall)
+
 debug: FORCE
 ifndef APPLICATION
-		$(foreach app,$(APPLICATIONS),$(MAKE) DEBUG=1 APPLICATION=$(app) debug1;)
+		$(foreach app,$(APPLICATIONS),$(MAKE) DEBUG=1 APPLICATION=$(app) $(PRECLEAN) all1 debug1;)
 else
 		$(MAKE) DEBUG=1 all1 debug1
 endif
 
-debug1: etc img/$(APPLICATION)$(MACH_IMGSUFF)
+debug1: FORCE
 		(cd img && $(MAKE) DEBUG=1 debug)
 
 flash: FORCE
@@ -65,7 +69,7 @@ buildtest: FORCE
 
 runtest: FORCE
 		$(foreach tst,$(TESTS),$(LINK) $(TST)/$(tst) $(APP);)
-		$(foreach tst,$(UNFINISHED_TESTS),$(MAKETEST) APPLICATION=$(tst) prerun_$(tst) run1 posbuild_$(tst);)
+		$(foreach tst,$(UNFINISHED_TESTS),$(MAKETEST) APPLICATION=$(tst) etc prerun_$(tst) run1 posbuild_$(tst);)
 
 cleantest: FORCE
 		$(foreach tst,$(TESTS),$(LINK) $(TST)/$(tst) $(APP);)
@@ -111,14 +115,17 @@ veryclean: clean cleanapps cleantest
 		find $(IMG) -maxdepth 1 -type f -perm 755 -exec $(CLEAN) {} \;
 
 dist: veryclean
-		find $(TOP) -name "*.h" -print | xargs sed -i "1r $(ETC)/license.txt"
-		find $(TOP) -name "*.cc" -print | xargs sed -i "1r $(ETC)/license.txt"
-		sed -e 's/^\/\//#/' $(ETC)/license.txt > $(ETC)/license.mk
-		find $(TOP) -name "makedefs" -print | xargs sed -i "1r $(ETC)/license.txt.mk"
-		find $(TOP) -name "makefile" -print | xargs sed -i "1r $(ETC)/license.txt.mk"
-		$(CLEAN) $(ETC)/license.mk
-		sed -e 's/^\/\//#/' $(ETC)/license.txt > $(ETC)/license.as
-		find $(TOP) -name "*.S" -print | xargs sed -i "1r $(ETC)/license.txt.as"
-		$(CLEAN) $(ETC)/license.as
+		find $(TOP) -name ".*project" -exec $(CLEAN) {} \;
+		find $(TOP) -name CVS -type d -print | xargs $(CLEANDIR)
+		find $(TOP) -name .svn -type d -print | xargs $(CLEANDIR)
+		find $(TOP) -name "*.h" -print | xargs sed -i "1r $(TOP)/LICENSE"
+		find $(TOP) -name "*.cc" -print | xargs sed -i "1r $(TOP)/LICENSE"
+		sed -e 's/^\/\//#/' LICENSE > LICENSE.mk
+		find $(TOP) -name "makedefs" -print | xargs sed -i "1r $(TOP)/LICENSE.mk"
+		find $(TOP) -name "makefile" -print | xargs sed -i "1r $(TOP)/LICENSE.mk"
+		$(CLEAN) LICENSE.mk
+		sed -e 's/^\/\//#/' LICENSE > LICENSE.as
+		find $(TOP) -name "*.S" -print | xargs sed -i "1r $(TOP)/LICENSE.as"
+		$(CLEAN) LICENSE.as
 
 FORCE:

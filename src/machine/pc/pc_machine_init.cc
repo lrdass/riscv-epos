@@ -17,10 +17,8 @@ void Machine::init()
     if(Traits<PCI>::enabled)
         PCI::init();
 
-#ifdef __SCRATCHPAD_H
     if(Traits<Scratchpad>::enabled)
         Scratchpad::init();
-#endif
 
 #ifdef __KEYBOARD_H
     if(Traits<Keyboard>::enabled)
@@ -30,11 +28,6 @@ void Machine::init()
 #ifdef __FPGA_H
     if(Traits<FPGA>::enabled)
         FPGA::init();
-#endif
-
-#if defined (__NIC_H) && defined (__ethernet__)
-    if(Traits<Ethernet>::enabled)
-        Initializer<Ethernet>::init();
 #endif
 }
 

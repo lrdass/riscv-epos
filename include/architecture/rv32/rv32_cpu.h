@@ -35,7 +35,7 @@ public:
         FLAG_SPP            = 3 << 12,     // Supervisor Previous Privilege
         FLAG_MPRV           = 1 << 17,     // Memory Priviledge
         FLAG_TVM            = 1 << 20,     // Trap Virtual Memory //not allow MMU
-        MSTATUS_DEFAULTS    = (FLAG_MIE | FLAG_MPIE | FLAG_MPP)
+        MSTATUS_DEFAULTS    = (FLAG_MIE | FLAG_SPP | FLAG_MPIE | FLAG_SPIE | FLAG_MPP | FLAG_SIE)
     };
 
     // Interrupt Enable Register (mie)
@@ -46,7 +46,7 @@ public:
         FLAG_MTIE       = 1 << 7,   // Machine Software Interrupt Enable
         FLAG_SEIE       = 1 << 9,   // Supervisor External Interrupt Enable
         FLAG_MEIE       = 1 << 11,  // Machine External Interrupt Enable
-        MIE_DEFAULTS    = (FLAG_MSIE | FLAG_MTIE | FLAG_MEIE)
+        MIE_DEFAULTS    = (FLAG_MSIE | FLAG_MTIE )
     };
 
     // CPU Context
@@ -170,34 +170,64 @@ public:
 
 
     // Atomic operations
-    template<typename T>
-    static T tsl(volatile T & lock) {
-        register T old;
-        register T one = 1;
-        ASM("1: lr.w    %0, (%1)        \n"
-            "   sc.w    t3, %2, (%1)    \n"
-            "   bnez    t3, 1b          \n" : "=&r"(old) : "r"(&lock), "r"(one) : "t3", "cc", "memory");
-        return old;
-    }
 
+    // using CPU_Common::tsl; // IMPLEMENT
+
+    // using CPU_Common::finc; // IMPLEMENT
+
+    // using CPU_Common::fdec; // IMPLEMENT
+
+    // using CPU_Common::cas; // IMPLEMENT
+
+    //  template<typename T>
+    //  static T finc(volatile T & value) {
+    //      register T old;
+    //      register T one = 1;
+    //      ASM(" amoadd.w %0, %1, (%2)   \n" : "=r"(old): "r"(one), "r"(&value) : "t0", "cc", "memory");
+    //      return old - 1;
+    //  }
+
+    //  template<typename T>
+    //  static T fdec(volatile T & value) {
+    //      register T old;
+    //      register T one = -1;
+    //      ASM(" amoadd.w %0, %1, (%2)   \n" : "=r"(old): "r"(one), "r"(&value) : "t0", "cc", "memory");
+    //      return old + 1;
+    // }
+
+        // using CPU_Common::finc;
+    
     template<typename T>
     static T finc(volatile T & value) {
         register T old;
         ASM("1: lr.w    %0, (%1)        \n"
             "   addi    %0, %0, 1       \n"
-            "   sc.w    t3, %0, (%1)    \n"
-            "   bnez    t3, 1b          \n" : "=&r"(old) : "r"(&value) : "t3", "cc", "memory");
+            "   sc.w    t0, %0, (%1)    \n"
+            "   bnez    t0, 1b          \n" : "=&r"(old) : "r"(&value) : "t0", "cc", "memory");
         return old - 1;
     }
 
+    // using CPU_Common::fdec;
+    
     template<typename T>
     static T fdec(volatile T & value) {
         register T old;
         ASM("1: lr.w    %0, (%1)        \n"
             "   addi    %0, %0, -1      \n"
-            "   sc.w    t3, %0, (%1)    \n"
-            "   bnez    t3, 1b          \n" : "=&r"(old) : "r"(&value) : "t3", "cc", "memory");
+            "   sc.w    t0, %0, (%1)    \n"
+            "   bnez    t0, 1b          \n" : "=&r"(old) : "r"(&value) : "t0", "cc", "memory");
         return old + 1;
+    }
+
+
+    template<typename T>
+    static T tsl(volatile T & lock) {
+        register T old;
+        register T one = 1;
+        ASM("1: lr.w %0, (%1)       \n"
+            "   sc.w t0, %2, (%1)   \n"
+            "   bnez t0, 1b         \n" : "=&r"(old) : "r"(&lock), "r"(one) : "t0", "cc", "memory");
+        return old;
     }
 
     template <typename T>
@@ -205,11 +235,12 @@ public:
         register T old;
         ASM("1: lr.w    %0, (%1)        \n"
             "   bne     %0, %2, 2f      \n"
-            "   sc.w    t3, %3, (%1)    \n"
-            "   bnez    t3, 1b          \n"
-            "2:                         \n" : "=&r"(old) : "r"(&value), "r"(compare), "r"(replacement) : "t3", "cc", "memory");
+            "   sc.w    t0, %3, (%1)    \n"
+            "   bnez    t0, 1b          \n"
+            "2:                         \n" : "=&r"(old) : "r"(&value), "r"(compare), "r"(replacement) : "t0", "cc", "memory");
         return old;
     }
+
 
     // Power modes
     static void halt() { ASM("wfi"); }
@@ -247,12 +278,9 @@ public:
     static void smp_barrier(unsigned long cores = cores()) { CPU_Common::smp_barrier<&finc>(cores, id()); }
 
     static void int_enable() { mie(MIE_DEFAULTS); }
-    // static void int_enable() { mstatus(mstatus() | (FLAG_MIE)); }
     static void int_disable() { mie(0); }
-    // static void int_disable() { mstatus(mstatus() & ~(FLAG_MIE)); }
 
     static bool int_enabled() { return (mie() & MIE_DEFAULTS) ; }
-    // static bool int_enabled() { return (mstatus() & FLAG_MIE) ; }
     static bool int_disabled() { return !int_enabled(); }
 
     static void csrr31() { ASM("csrr x31, mstatus" : : : "x31"); }

@@ -2,6 +2,7 @@
 
 #include <system.h>
 #include <process.h>
+#include <machine.h>
 
 __BEGIN_SYS
 
@@ -10,8 +11,6 @@ class Init_First
 public:
     Init_First() {
         db<Init>(TRC) << "Init_First()" << endl;
-
-        CPU::smp_barrier();
 
         if(!Traits<System>::multithread) {
             CPU::int_enable();
@@ -27,9 +26,10 @@ public:
 
         db<Init, Thread>(INF) << "Dispatching the first thread: " << first << endl;
 
+        // This barrier is particularly important, since afterwards the temporary stacks
+        // and data structures established by SETUP and announced as "free memory" will indeed be
+        // available to user threads.
         CPU::smp_barrier();
-        Timer::config(Traits<Timer>::FREQUENCY);
-        CPU::int_enable();  // Was disabled at Thread::init to prevent INT_RESCHEDULE before context->load()
         first->_context->load();
     }
 };
