@@ -74,6 +74,7 @@ namespace Scheduling_Criteria
         static const bool timed = true;
         static const bool dynamic = false;
         static const bool preemptive = true;
+        static const bool multiqueue = false;
 
     public:
         template <typename ... Tn>
@@ -87,6 +88,7 @@ namespace Scheduling_Criteria
         static const bool timed = false;
         static const bool dynamic = false;
         static const bool preemptive = false;
+        static const bool multiqueue = false;
 
     public:
         FCFS(int p = NORMAL);
@@ -156,6 +158,7 @@ namespace Scheduling_Criteria
         static const bool timed = true;
         static const bool dynamic = false;
         static const bool preemptive = true;
+        static const bool multiqueue = false;
 
         static const unsigned int QUEUES = Traits<Machine>::CPUS;
 
@@ -191,6 +194,7 @@ namespace Scheduling_Criteria
         static const bool timed = false;
         static const bool dynamic = false;
         static const bool preemptive = true;
+        static const bool multiqueue = false;
 
     public:
         RM(int p = APERIODIC): RT_Common(p) {}
@@ -223,6 +227,7 @@ namespace Scheduling_Criteria
         static const bool timed = false;
         static const bool dynamic = false;
         static const bool preemptive = true;
+        static const bool multiqueue = false;
 
     public:
         DM(int p = APERIODIC): RT_Common(p) {}
@@ -237,6 +242,7 @@ namespace Scheduling_Criteria
         static const bool timed = true;
         static const bool dynamic = true;
         static const bool preemptive = true;
+        static const bool multiqueue = false;
 
     public:
         EDF(int p = APERIODIC): RT_Common(p) {}
