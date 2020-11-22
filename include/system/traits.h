@@ -27,11 +27,13 @@ namespace Scheduling_Criteria
 {
     class Priority;
     class FCFS;
+    class FS;
     class RR;
     class RM;
     class DM;
     class EDF;
     class GRR;
+    class MCFS;
     class CPU_Affinity;
     class GEDF;
     class PEDF;

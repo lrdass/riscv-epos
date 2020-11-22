@@ -111,6 +111,8 @@ protected:
     }
 
     static Thread * volatile running() { return _scheduler.chosen(); }
+    static Thread * volatile running_medium() { return _scheduler_medium.chosen(); }
+    static Thread * volatile running_low() { return _scheduler_low.chosen(); }
 
     static void lock() {
         CPU::int_disable();
@@ -151,8 +153,11 @@ protected:
     Queue::Element _link;
 
     static volatile unsigned int _thread_count;
+    int shame_level;
     static Scheduler_Timer * _timer;
     static Scheduler<Thread> _scheduler;
+    static Scheduler<Thread> _scheduler_medium;
+    static Scheduler<Thread> _scheduler_low;
     static Spin _lock;
 };
 
