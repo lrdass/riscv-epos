@@ -12,12 +12,12 @@ using namespace EPOS;
 OStream cout;
 
 int th1(){
-   cout << "thread 1 " ;
+   cout << "thread 1\n \n \n \n  " ;
    return 1;
 }
 
 int th2(){
-   cout << "thread 2 " ;
+   cout << "thread 2 \n\n\n" ;
    return 2;
 }
 

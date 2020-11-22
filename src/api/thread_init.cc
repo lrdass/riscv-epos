@@ -11,7 +11,7 @@ extern "C" { void __epos_app_entry(); }
 
 void Thread::init()
 {
-    db<Init, Thread>(TRC) << "Thread::init()" << endl;
+    db<Init, Thread>(WRN) << "Thread::init()" << endl;
 
     // If EPOS is a library, then adjust the application entry point to __epos_app_entry,
     // which will directly call main(). In this case, _init will have already been called,
@@ -34,7 +34,7 @@ void Thread::init()
         new (SYSTEM) Thread(Thread::Configuration(Thread::RUNNING, Thread::MAIN), reinterpret_cast<int (*)()>(__epos_app_entry));
 
         // Idle thread creation does not cause rescheduling (see Thread::constructor_epilogue)
-        new (SYSTEM) Thread(Thread::Configuration(Thread::READY, Thread::IDLE), &Thread::idle);
+        // new (SYSTEM) Thread(Thread::Configuration(Thread::READY, Thread::IDLE), &Thread::idle);
     } else
         new (SYSTEM) Thread(Thread::Configuration(Thread::RUNNING, Thread::IDLE), &Thread::idle);
 
