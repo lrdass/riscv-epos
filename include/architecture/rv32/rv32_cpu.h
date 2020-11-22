@@ -170,6 +170,33 @@ public:
 
 
     // Atomic operations
+
+    // using CPU_Common::tsl; // IMPLEMENT
+
+    // using CPU_Common::finc; // IMPLEMENT
+
+    // using CPU_Common::fdec; // IMPLEMENT
+
+    // using CPU_Common::cas; // IMPLEMENT
+
+    //  template<typename T>
+    //  static T finc(volatile T & value) {
+    //      register T old;
+    //      register T one = 1;
+    //      ASM(" amoadd.w %0, %1, (%2)   \n" : "=r"(old): "r"(one), "r"(&value) : "t0", "cc", "memory");
+    //      return old - 1;
+    //  }
+
+    //  template<typename T>
+    //  static T fdec(volatile T & value) {
+    //      register T old;
+    //      register T one = -1;
+    //      ASM(" amoadd.w %0, %1, (%2)   \n" : "=r"(old): "r"(one), "r"(&value) : "t0", "cc", "memory");
+    //      return old + 1;
+    // }
+
+        // using CPU_Common::finc;
+    
     template<typename T>
     static T finc(volatile T & value) {
         register T old;
@@ -180,6 +207,8 @@ public:
         return old - 1;
     }
 
+    // using CPU_Common::fdec;
+    
     template<typename T>
     static T fdec(volatile T & value) {
         register T old;
@@ -190,13 +219,14 @@ public:
         return old + 1;
     }
 
+
     template<typename T>
     static T tsl(volatile T & lock) {
         register T old;
         register T one = 1;
         ASM("1: lr.w %0, (%1)       \n"
             "   sc.w t0, %2, (%1)   \n"
-            "   bnez t0, 1b         \n" : "=&r"(old) : "r"(lock), "r"(one) : "t0", "cc", "memory");
+            "   bnez t0, 1b         \n" : "=&r"(old) : "r"(&lock), "r"(one) : "t0", "cc", "memory");
         return old;
     }
 
@@ -204,12 +234,13 @@ public:
     static T cas(volatile T & value, T compare, T replacement) {
         register T old;
         ASM("1: lr.w    %0, (%1)        \n"
-            "   bne     %0, %2, f2      \n"
+            "   bne     %0, %2, 2f      \n"
             "   sc.w    t0, %3, (%1)    \n"
             "   bnez    t0, 1b          \n"
-            "2:                         \n" : "=&r"(old) : "r"(value), "r"(compare), "r"(replacement) : "t0", "cc", "memory");
+            "2:                         \n" : "=&r"(old) : "r"(&value), "r"(compare), "r"(replacement) : "t0", "cc", "memory");
         return old;
     }
+
 
     // Power modes
     static void halt() { ASM("wfi"); }

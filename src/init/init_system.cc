@@ -17,14 +17,19 @@ public:
     Init_System() {
         db<Init>(TRC) << "Init_System()" << endl;
 
-        // Initialize the processor
-        if(CPU::id() != 0){
+        CPU::smp_barrier();
+
+        // Only the boot CPU runs INIT_SYSTEM fully
+        if(CPU::id() != 0) {
+            // Wait until the boot CPU has initialized the machine
             CPU::smp_barrier();
             CPU::init();
             Timer::init();
             Thread::init();
             return;
         }
+
+        // Initialize the processor
         db<Init>(INF) << "Initializing the CPU: " << endl;
         CPU::init();
         db<Init>(INF) << "done!" << endl;
@@ -38,14 +43,15 @@ public:
         } else
             System::_heap = new (&System::_preheap[0]) Heap(MMU::alloc(MMU::pages(HEAP_SIZE)), HEAP_SIZE);
 
-        db<Init>(INF) << "done!" << endl;
+        db<Init>(WRN) << "done!" << endl;
 
         // Initialize the machine
         db<Init>(WRN) << "Initializing the machine: " << endl;
         Machine::init();
-        db<Init>(WRN) << "done!" << endl;
-        
-        // CPU::smp_barrier();
+        db<Init>(INF) << "done!" << endl;
+
+        CPU::smp_barrier();
+
         // Initialize system abstractions
         db<Init>(INF) << "Initializing system abstractions: " << endl;
         System::init();

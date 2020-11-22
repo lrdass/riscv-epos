@@ -59,9 +59,7 @@ public:
 
     // clint offsets
     enum {
-        // From: 3.1.9 - Machine Interrupt Registers (mipandmie) - RISCV Privileged Spec
-        // The standard portions (bits 15:0) of registers mip and mie are formatted as shown in Figures 3.14 and 3.15 respectively
-        MSIP_OFFSET = 4,
+        MSIP_CORE_OFFSET        = 4
     };
 
 public:
@@ -82,8 +80,7 @@ public:
         db<IC>(TRC) << "IC::enable()" << endl;
         // at beggining CLINT is already started, so we are only enabling all interrupts
         // this is done on MIE register
-        Reg32 flags = (1 << SUPERVISOR_SOFT_INT | 1 << MACHINE_SOFT_INT | 
-                       1 << SUPERVISOR_TIMER_INT | 1 << MACHINE_TIMER_INT );
+        Reg32 flags = (1 << MACHINE_SOFT_INT | 1 << MACHINE_TIMER_INT );
         ASM ("csrw mie, %0" : : "r"(flags) : );
     }
     static void enable(Interrupt_Id i) {
@@ -121,7 +118,6 @@ public:
             // This is done to diferentiate exceptions from interruptions
             // It will only be useful when working with mtvec mode 0
             // In this case, interrupts and exceptions are routed to the same handler
-            // return (id & INT_MASK) + INTS;
             return id & INT_MASK;
         }
     }
@@ -133,17 +129,14 @@ public:
     static void ipi(unsigned int cpu, Interrupt_Id i) {
         db<IC>(TRC) << "IC::ipi(cpu=" << cpu << ",int=" << i << ")" << endl;
         assert(i < INTS);
-        // um processo interrompe os outros
-        volatile unsigned int *msip = reinterpret_cast<unsigned int*>(Memory_Map::CLINT_BASE | cpu << 2);
-
-        *msip = *msip | 1 << i;
+        // accessing a Reg32 
+        reg(cpu * MSIP_CORE_OFFSET) = 0x1 << i; 
     }
 
     static void ipi_eoi(Interrupt_Id i) {
-        // end of interrupt - zerar o mcause
-        volatile unsigned int *msip = reinterpret_cast<unsigned int*>(Memory_Map::CLINT_BASE | CPU::id() << 2);
-        *msip = 0;
-        ASM("    csrw   mcause, zero \n");
+        // clear msip
+        reg(CPU::id() * MSIP_CORE_OFFSET) = 0; 
+        ASM("csrw mcause, zero" : : : "memory", "cc");
     }
 
 

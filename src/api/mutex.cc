@@ -22,7 +22,7 @@ void Mutex::lock()
 
     begin_atomic();
     if(tsl(_locked))
-        sleep(); // implicit end_atomic()
+        sleep();
     else
         end_atomic();
 }
@@ -36,7 +36,8 @@ void Mutex::unlock()
     if(_queue.empty()) {
         _locked = false;
         end_atomic();
-    } else
+    }
+    else
         wakeup(); // implicit end_atomic()
 }
 

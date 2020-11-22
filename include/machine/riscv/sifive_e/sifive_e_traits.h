@@ -98,6 +98,8 @@ template<> struct Traits<Serial_Display>: public Traits<Machine_Common>
     static const int TAB_SIZE = 8;
 };
 
+
+
 __END_SYS
 
 #endif
