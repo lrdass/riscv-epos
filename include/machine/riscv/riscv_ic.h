@@ -59,7 +59,9 @@ public:
 
     // clint offsets
     enum {
-        // CORE WAKEUP OFFSET
+        // From: 3.1.9 - Machine Interrupt Registers (mipandmie) - RISCV Privileged Spec
+        // The standard portions (bits 15:0) of registers mip and mie are formatted as shown in Figures 3.14 and 3.15 respectively
+        MSIP_OFFSET = 4,
     };
 
 public:
