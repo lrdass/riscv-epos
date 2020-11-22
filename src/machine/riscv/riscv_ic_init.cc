@@ -9,7 +9,7 @@ __BEGIN_SYS
 // Class methods
 void IC::init()
 {
-    db<Init, IC>(TRC) << "IC::init()" << endl;
+    db<Init, IC>(INF) << "IC::init()" << endl;
 
     CPU::int_disable(); // will be reenabled at Thread::init() by Context::load()
 

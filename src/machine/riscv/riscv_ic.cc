@@ -24,7 +24,7 @@ void IC::entry()
     // Handle interrupts in machine mode
     ASM("       .align 4                                            \n"
         // Save context
-        "	addi     sp,      sp,   -128                        \n"     // 32 regs of 4 bytes each = 128 Bytes
+        "	addi     sp,      sp,   -140                        \n"     // 32 regs of 4 bytes each = 128 Bytes
         "	sw	 x1,   4(sp)                                \n"
         "	sw	 x2,   8(sp)                                \n"
         "	sw	 x3,  12(sp)                                \n"
@@ -56,6 +56,12 @@ void IC::entry()
         "	sw	x29, 116(sp)                                \n"
         "	sw	x30, 120(sp)                                \n"
         "	sw	x31, 124(sp)                                \n"
+        "   csrr x31, mie                                \n"
+        "   sw  x31, 128(sp)                                \n"
+        "   csrr x31, mstatus                                \n"
+        "   sw  x31, 132(sp)                            \n"
+        "   csrr x31, mepc                                \n"
+        "   sw  x31, 136(sp)                            \n"
         "	la       ra, restore                                \n" // Set LR to restore context before returning
         "	j       _dispatch                                   \n"
         // Restore context
@@ -91,7 +97,13 @@ void IC::entry()
         "	lw	 x29, 116(sp)                               \n"
         "	lw	 x30, 120(sp)                               \n"
         "	lw	 x31, 124(sp)                               \n"
-        "	addi      sp,     sp,    128                        \n"
+        "       lw       x31, 128(sp)                               \n"
+        "       csrw     mie, x31                                   \n"
+        "       lw       x31, 132(sp)                               \n"
+        "       csrw mstatus, x31                                   \n"
+        "       lw       x31, 136(sp)                               \n"
+        "       csrw    mepc, x31                                   \n"
+        "	addi      sp,     sp,    140                        \n"
         "	mret                                                \n" : : "i"(dispatch));
 }
 
@@ -112,50 +124,56 @@ void IC::int_not(Interrupt_Id i)
 
 void IC::hard_fault(Interrupt_Id i)
 {
-    db<IC>(ERR) << "IC::hard_fault(i=" << i << ")" << endl;
+    db<IC>(INF) << "IC::hard_fault(i=" << i << ")" << endl;
     Machine::panic();
 }
 
 void IC::undefined_instruction(Interrupt_Id i)
 {
-    db<IC>(ERR) << "Undefined instruction(i=" << i << ")" << endl;
+    db<IC>(INF) << "Undefined instruction(i=" << i << ")" << endl;
     Machine::panic();
 }
 
 void IC::software_interrupt(Interrupt_Id i)
 {
-    db<IC>(ERR) << "Software interrupt(i=" << i << ")" << endl;
+    db<IC>(INF) << "Software interrupt(i=" << i << ")" << endl;
     Machine::panic();
 }
 
 void IC::prefetch_abort(Interrupt_Id i)
 {
-    db<IC>(ERR) << "Prefetch abort(i=" << i << ")" << endl;
+    db<IC>(INF) << "Prefetch abort(i=" << i << ")" << endl;
     Machine::panic();
 }
 
 void IC::data_abort(Interrupt_Id i)
 {
-    db<IC>(ERR) << "Data abort(i=" << i << ")" << endl;
+    db<IC>(INF) << "Data abort(i=" << i << ")" << endl;
     Machine::panic();
 }
 
 void IC::reserved(Interrupt_Id i)
 {
-    db<IC>(ERR) << "Reserved(i=" << i << ")" << endl;
+    db<IC>(INF) << "Reserved(i=" << i << ")" << endl;
     Machine::panic();
 }
 
 void IC::fiq(Interrupt_Id i)
 {
-    db<IC>(ERR) << "FIQ handler(i=" << i << ")" << endl;
+    db<IC>(INF) << "FIQ handler(i=" << i << ")" << endl;
     Machine::panic();
 }
 
 void IC::exception_handling()
 {
-    db<IC>(ERR) << "Exception abort" << endl;
-    Interrupt_Id id = int_id();
+    CPU::Reg mepc;
+    ASM("csrr %0, mepc" : "=r"(mepc) : :);
+    CPU::Reg sepc;
+    ASM("csrr %0, sepc" : "=r"(sepc) : :);
+    CPU::Reg mtval;
+    ASM("csrr %0, mtval" : "=r"(mtval) : :);
+    db<IC>(ERR) << "Exception abort: " << hex << (unsigned int)mepc << ", " << hex << (unsigned int)sepc << ", " << hex << (unsigned int)mtval << endl;
+    Interrupt_Id id = IC::int_id();
     switch(id) {
         case 0: // unaligned Instruction
         case 1: // instruction access failure

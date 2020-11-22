@@ -9,9 +9,7 @@ void Machine::pre_init(System_Info * si)
     if(CPU::id() == 0)
         Display::init();
 
-    db<Init>(WRN) << "Machine::pre_init()" << endl;
-
-    db<Init, Machine>(TRC) << "Machine::pre_init()" << endl;
+    db<Init, Machine>(INF) << "Machine::pre_init()" << endl;
 
     if(CPU::id() == 0) {
         if(Traits<IC>::enabled) {
@@ -27,11 +25,10 @@ void Machine::pre_init(System_Info * si)
 
 void Machine::init()
 {
-    db<Init, Machine>(WRN) << "Machine::init()" << endl;
+    db<Init, Machine>(INF) << "Machine::init()" << endl;
 
-    if(Traits<Timer>::enabled){
+    if(Traits<Timer>::enabled)
         Timer::init();
-    }
 }
 
 __END_SYS

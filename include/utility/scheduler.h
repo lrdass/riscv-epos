@@ -74,6 +74,7 @@ namespace Scheduling_Criteria
         static const bool timed = true;
         static const bool dynamic = false;
         static const bool preemptive = true;
+        static const bool multiqueue = false;
 
     public:
         template <typename ... Tn>
@@ -89,9 +90,23 @@ namespace Scheduling_Criteria
         static const bool preemptive = false;
 
     public:
-        FCFS(int p = NORMAL);
         template <typename ... Tn>
         FCFS(int p = NORMAL, Tn & ... an);
+    };
+
+    class FS: public Priority
+    {
+    public:
+        static const bool timed = true;
+        static const bool dynamic = true;
+        static const bool preemptive = true;
+        static const bool multiqueue = true;
+
+    public:
+        template <typename ... Tn>
+        FS(int p = NORMAL, Tn & ... an): Priority(p) {}
+
+        void update();
     };
 
 
@@ -118,6 +133,18 @@ namespace Scheduling_Criteria
     public:
         template <typename ... Tn>
         GRR(int p = NORMAL, Tn & ... an): RR(p) {}
+
+        static unsigned int current_head() { return CPU::id(); }
+    };
+
+    class MCFS: public FS
+    {
+    public:
+        static const unsigned int HEADS = Traits<Machine>::CPUS;
+
+    public:
+        template <typename ... Tn>
+        MCFS(int p = NORMAL, Tn & ... an): FS(p) {}
 
         static unsigned int current_head() { return CPU::id(); }
     };
@@ -280,6 +307,10 @@ class Scheduling_Queue: public Scheduling_List<T> {};
 
 template<typename T>
 class Scheduling_Queue<T, Scheduling_Criteria::GRR>:
+public Multihead_Scheduling_List<T> {};
+
+template<typename T>
+class Scheduling_Queue<T, Scheduling_Criteria::MCFS>:
 public Multihead_Scheduling_List<T> {};
 
 template<typename T>
