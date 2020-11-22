@@ -7,6 +7,8 @@
 #include <utility/queue.h>
 #include <utility/handler.h>
 #include <utility/scheduler.h>
+#include <machine/machine.h>
+#include <machine/timer.h>
 
 extern "C" { void __exit(); }
 
@@ -14,12 +16,12 @@ __BEGIN_SYS
 
 class Thread
 {
-    friend class Init_First;            // context->load()
-    friend class Init_System;           // for init() on CPU != 0
-    friend class Scheduler<Thread>;     // for link()
-    friend class Synchronizer_Common;   // for lock() and sleep()
-    friend class Alarm;                 // for lock()
-    friend class System;                // for init()
+    friend class Init_First;
+    friend class Init_System;
+    friend class Scheduler<Thread>;
+    friend class Synchronizer_Common;
+    friend class Alarm;
+    friend class System;
 
 protected:
     static const bool smp = Traits<Thread>::smp;
