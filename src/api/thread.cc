@@ -15,6 +15,8 @@ __BEGIN_SYS
 volatile unsigned int Thread::_thread_count;
 Scheduler_Timer * Thread::_timer;
 Scheduler<Thread> Thread::_scheduler;
+Scheduler<Thread> Thread::_scheduler_medium;
+Scheduler<Thread> Thread::_scheduler_low;
 Spin Thread::_lock;
 
 // Methods
@@ -337,8 +339,29 @@ void Thread::reschedule()
 
     assert(locked()); // locking handled by caller
 
-    Thread * prev = running();
-    Thread * next = _scheduler.choose();
+    Thread * prev;
+    Thread * next;
+    if(Criterion::multiqueue){
+        prev = running();
+        next = _scheduler.choose();
+        
+        if(!prev){
+            prev = running_medium();
+        }
+        if(!prev){
+            prev = running_low();
+        }
+ 
+        if(!next){
+            next = _scheduler_medium.choose();
+        }
+        if(!next){
+            next = _scheduler_low.choose();
+        }
+    }else{
+        prev = running();
+        next = _scheduler.choose();
+    }
 
     dispatch(prev, next);
 }
@@ -368,6 +391,23 @@ void Thread::rescheduler(IC::Interrupt_Id i)
 void Thread::time_slicer(IC::Interrupt_Id i)
 {
     lock();
+    if(Criterion::multiqueue){
+        Thread * prev = running();
+        if(!prev){
+            prev = running_medium();
+        }
+        if(!prev){
+            prev = running_low();
+        }
+
+        if(prev->shame_level == 1){
+            _scheduler_low.insert(prev);
+            prev->shame_level++;
+        }else if(prev->shame_level == 0){
+            _scheduler_medium.insert(prev);
+            prev->shame_level++;
+        }
+    }
     reschedule();
     unlock();
 }

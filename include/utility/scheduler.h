@@ -74,6 +74,7 @@ namespace Scheduling_Criteria
         static const bool timed = true;
         static const bool dynamic = false;
         static const bool preemptive = true;
+        static const bool multiqueue = false;
 
     public:
         template <typename ... Tn>
@@ -87,11 +88,27 @@ namespace Scheduling_Criteria
         static const bool timed = false;
         static const bool dynamic = false;
         static const bool preemptive = false;
+        static const bool multiqueue = false;
 
     public:
         FCFS(int p = NORMAL);
         template <typename ... Tn>
         FCFS(int p = NORMAL, Tn & ... an);
+    };
+
+    class FS: public Priority
+    {
+    public:
+        static const bool timed = true;
+        static const bool dynamic = true;
+        static const bool preemptive = true;
+        static const bool multiqueue = true;
+
+    public:
+        template <typename ... Tn>
+        FS(int p = NORMAL, Tn & ... an): Priority(p) {}
+
+        void update();
     };
 
 
@@ -122,6 +139,18 @@ namespace Scheduling_Criteria
         static unsigned int current_head() { return CPU::id(); }
     };
 
+    class MCFS: public FS
+    {
+    public:
+        static const unsigned int HEADS = Traits<Machine>::CPUS;
+
+    public:
+        template <typename ... Tn>
+        MCFS(int p = NORMAL, Tn & ... an): FS(p) {}
+
+        static unsigned int current_head() { return CPU::id(); }
+    };
+
     // CPU Affinity
     class CPU_Affinity: public Priority, public Variable_Queue
     {
@@ -129,6 +158,7 @@ namespace Scheduling_Criteria
         static const bool timed = true;
         static const bool dynamic = false;
         static const bool preemptive = true;
+        static const bool multiqueue = false;
 
         static const unsigned int QUEUES = Traits<Machine>::CPUS;
 
@@ -164,6 +194,7 @@ namespace Scheduling_Criteria
         static const bool timed = false;
         static const bool dynamic = false;
         static const bool preemptive = true;
+        static const bool multiqueue = false;
 
     public:
         RM(int p = APERIODIC): RT_Common(p) {}
@@ -196,6 +227,7 @@ namespace Scheduling_Criteria
         static const bool timed = false;
         static const bool dynamic = false;
         static const bool preemptive = true;
+        static const bool multiqueue = false;
 
     public:
         DM(int p = APERIODIC): RT_Common(p) {}
@@ -210,6 +242,7 @@ namespace Scheduling_Criteria
         static const bool timed = true;
         static const bool dynamic = true;
         static const bool preemptive = true;
+        static const bool multiqueue = false;
 
     public:
         EDF(int p = APERIODIC): RT_Common(p) {}
@@ -280,6 +313,10 @@ class Scheduling_Queue: public Scheduling_List<T> {};
 
 template<typename T>
 class Scheduling_Queue<T, Scheduling_Criteria::GRR>:
+public Multihead_Scheduling_List<T> {};
+
+template<typename T>
+class Scheduling_Queue<T, Scheduling_Criteria::MCFS>:
 public Multihead_Scheduling_List<T> {};
 
 template<typename T>
