@@ -30,6 +30,9 @@ public:
         // and data structures established by SETUP and announced as "free memory" will indeed be
         // available to user threads.
         CPU::smp_barrier();
+        //start timer
+        Timer::config(Traits<Timer>::FREQUENCY);
+        CPU::int_enable();
         first->_context->load();
     }
 };

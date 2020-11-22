@@ -332,14 +332,35 @@ void Thread::wakeup_all(Queue * q)
 
 void Thread::reschedule()
 {
-    if(!Criterion::timed || Traits<Thread>::hysterically_debugged)
-        db<Thread>(TRC) << "Thread::reschedule()" << endl;
+    db<Thread>(INF) << "Thread::reschedule()" << endl;
 
-    assert(locked()); // locking handled by caller
+    // lock() must be called before entering this method
+    assert(locked());
 
-    Thread * prev = running();
-    Thread * next = _scheduler.choose();
+    Thread * prev;
+    Thread * next;
+    if(Criterion::multiqueue){
+        prev = running();
+        next = _scheduler.choose();
 
+        if(!prev){
+            prev = running_medium();
+        }
+        if(!prev){
+            prev = running_low();
+        }
+
+        if(!next){
+            next = _scheduler_medium.choose();
+        }
+        if(!next){
+            next = _scheduler_low.choose();
+        }
+    }else{
+        prev = running();
+        next = _scheduler.choose();
+    }
+    
     dispatch(prev, next);
 }
 
@@ -368,7 +389,23 @@ void Thread::rescheduler(IC::Interrupt_Id i)
 void Thread::time_slicer(IC::Interrupt_Id i)
 {
     lock();
-    reschedule();
+    if(Criterion::multiqueue){
+        Thread * prev = running();
+        if(!prev){
+            prev = running_medium();
+        }
+        if(!prev){
+            prev = running_low();
+        }
+
+        if(prev->shame_level == 1){
+            _scheduler_low.insert(prev);
+            prev->shame_level++;
+        }else if(prev->shame_level == 0){
+            _scheduler_medium.insert(prev);
+            prev->shame_level++;
+        }
+    }
     unlock();
 }
 
