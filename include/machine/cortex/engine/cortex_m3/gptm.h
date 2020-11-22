@@ -121,8 +121,6 @@ public:
         gptm(GPTMICR) |= TATO_INT;
     }
 
-    Count read() { return count(); }
-
     void pwm(const Percent & duty_cycle) {
         disable();
 

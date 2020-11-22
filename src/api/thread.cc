@@ -3,7 +3,6 @@
 #include <machine.h>
 #include <system.h>
 #include <process.h>
-#include <clerk.h>
 
 // This_Thread class attributes
 __BEGIN_UTIL
@@ -16,40 +15,23 @@ __BEGIN_SYS
 volatile unsigned int Thread::_thread_count;
 Scheduler_Timer * Thread::_timer;
 Scheduler<Thread> Thread::_scheduler;
-Scheduler<Thread> Thread::_scheduler_medium;
-Scheduler<Thread> Thread::_scheduler_low;
 Spin Thread::_lock;
 
-
-// Statistics
-unsigned int Thread::_Statistics::hyperperiod[Traits<Build>::CPUS];
-TSC::Time_Stamp Thread::_Statistics::last_hyperperiod[Traits<Build>::CPUS];
-unsigned int Thread::_Statistics::hyperperiod_count[Traits<Build>::CPUS];
-TSC::Time_Stamp Thread::_Statistics::hyperperiod_idle_time[Traits<Build>::CPUS];
-TSC::Time_Stamp Thread::_Statistics::idle_time[Traits<Build>::CPUS];
-TSC::Time_Stamp Thread::_Statistics::last_idle[Traits<Build>::CPUS];
-
-
 // Methods
-void Thread::constructor_prologue(const Color & color, unsigned int stack_size)
+void Thread::constructor_prologue(unsigned int stack_size)
 {
     lock();
 
     _thread_count++;
-    shame_level = 0;
     _scheduler.insert(this);
 
-    if(Traits<MMU>::colorful && color != WHITE)
-        _stack = new (color) char[stack_size];
-    else
-        _stack = new (SYSTEM) char[stack_size];
+    _stack = new (SYSTEM) char[stack_size];
 }
 
 
 void Thread::constructor_epilogue(const Log_Addr & entry, unsigned int stack_size)
 {
-    db<Thread>(TRC) << "Thread(task=" << _task
-                    << ",entry=" << entry
+    db<Thread>(TRC) << "Thread(entry=" << entry
                     << ",state=" << _state
                     << ",priority=" << _link.rank()
                     << ",stack={b=" << reinterpret_cast<void *>(_stack)
@@ -58,9 +40,6 @@ void Thread::constructor_epilogue(const Log_Addr & entry, unsigned int stack_siz
                     << "," << *_context << "}) => " << this << "@" << _link.rank().queue() << endl;
 
     assert((_state != WAITING) && (_state != FINISHING)); // Invalid states
-
-    if(multitask)
-        _task->insert(this);
 
     if((_state != READY) && (_state != RUNNING))
         _scheduler.suspend(this);
@@ -109,11 +88,6 @@ Thread::~Thread()
         break;
     }
 
-    if(multitask) {
-        _task->remove(this);
-        delete _user_stack;
-    }
-
     if(_joining)
         _joining->resume();
 
@@ -122,7 +96,19 @@ Thread::~Thread()
     delete _stack;
 }
 
-
+// Thread::priority implicitly migrates threads whenever c.queue() is different from _link.rank().queue()
+// The following cases must be taken into account:
+// CPU,   Thread State 	-> CPU,   Thread State
+// This,  running 		-> Other, running
+// This,  running 		-> Other, not running
+// This,  not running 	-> Other, running
+// This,  not running 	-> Other  not running
+// Other, running 		-> This,  running
+// Other, running 		-> This,  not running
+// Other, not running 	-> This,  running
+// Other, not running 	-> This,  not running
+// Other, not running 	-> Other, running
+// Other, not running 	-> Other, not running
 void Thread::priority(const Criterion & c)
 {
     lock();
@@ -346,34 +332,13 @@ void Thread::wakeup_all(Queue * q)
 
 void Thread::reschedule()
 {
-    db<Thread>(INF) << "Thread::reschedule()" << endl;
+    if(!Criterion::timed || Traits<Thread>::hysterically_debugged)
+        db<Thread>(TRC) << "Thread::reschedule()" << endl;
 
-    // lock() must be called before entering this method
-    assert(locked());
+    assert(locked()); // locking handled by caller
 
-    Thread * prev;
-    Thread * next;
-    if(Criterion::multiqueue){
-        prev = running();
-        next = _scheduler.choose();
-        
-        if(!prev){
-            prev = running_medium();
-        }
-        if(!prev){
-            prev = running_low();
-        }
- 
-        if(!next){
-            next = _scheduler_medium.choose();
-        }
-        if(!next){
-            next = _scheduler_low.choose();
-        }
-    }else{
-        prev = running();
-        next = _scheduler.choose();
-    }
+    Thread * prev = running();
+    Thread * next = _scheduler.choose();
 
     dispatch(prev, next);
 }
@@ -402,26 +367,9 @@ void Thread::rescheduler(IC::Interrupt_Id i)
 
 void Thread::time_slicer(IC::Interrupt_Id i)
 {
-    
     lock();
-    if(Criterion::multiqueue){
-        Thread * prev = running();
-        if(!prev){
-            prev = running_medium();
-        }
-        if(!prev){
-            prev = running_low();
-        }
-
-        if(prev->shame_level == 1){
-            _scheduler_low.insert(prev);
-            prev->shame_level++;
-        }else if(prev->shame_level == 0){
-            _scheduler_medium.insert(prev);
-            prev->shame_level++;
-        }
-    }
     reschedule();
+    unlock();
 }
 
 
@@ -430,43 +378,6 @@ void Thread::dispatch(Thread * prev, Thread * next, bool charge)
     if(charge) {
         if(Criterion::timed)
             _timer->reset();
-    }
-
-    if(monitored) {
-        unsigned int cpu = CPU::id();
-        TSC::Time_Stamp ts = TSC::time_stamp();
-        if(INARRAY(Traits<Monitor>::SYSTEM_EVENTS, Traits<Monitor>::THREAD_EXECUTION_TIME) || INARRAY(Traits<Monitor>::SYSTEM_EVENTS, Traits<Monitor>::CPU_EXECUTION_TIME)) {
-            if((prev->priority() == IDLE) && (prev->_statistics.last_idle[cpu] != 0)) {
-                prev->_statistics.idle_time[cpu] += ts - prev->_statistics.last_idle[cpu];
-            }
-            if(next->priority() == IDLE) {
-                prev->_statistics.last_idle[cpu] = ts;
-            }
-            if(INARRAY(Traits<Monitor>::SYSTEM_EVENTS, Traits<Monitor>::THREAD_EXECUTION_TIME)) {
-                if(prev->priority() != IDLE)
-                    prev->_statistics.execution_time += ts - prev->_statistics.last_execution;
-                if((prev->priority() > Criterion::PERIODIC) && (prev->priority() < Criterion::APERIODIC)) { // a real-time thread
-                    if(prev->_statistics.hyperperiod_count_thread < prev->_statistics.hyperperiod_count[cpu]) { // only happen when usage is 100%
-                        // if this is not being called after a wait_next, deadline miss...
-                        prev->_statistics.hyperperiod_average_execution_time = prev->_statistics.average_execution_time/prev->_statistics.jobs;
-                        prev->_statistics.hyperperiod_jobs = prev->_statistics.jobs;
-                        prev->_statistics.average_execution_time = 0;
-                        prev->_statistics.jobs = 0;
-                    }
-                }
-                if(next->priority() != IDLE)
-                    next->_statistics.last_execution = ts;
-                if((next->priority() > Criterion::PERIODIC) && (next->priority() < Criterion::APERIODIC)) { // a real-time thread
-                    if (next->_statistics.hyperperiod_count_thread < next->_statistics.hyperperiod_count[cpu]) {
-                        next->_statistics.hyperperiod_average_execution_time = next->_statistics.average_execution_time/next->_statistics.jobs;
-                        next->_statistics.hyperperiod_jobs = next->_statistics.jobs;
-                        next->_statistics.average_execution_time = 0;
-                        next->_statistics.jobs = 0;
-                    }
-                }
-            }
-        }
-        Monitor::run();
     }
 
     if(prev != next) {
@@ -480,9 +391,6 @@ void Thread::dispatch(Thread * prev, Thread * next, bool charge)
 
         if(smp)
             _lock.release();
-
-        if(multitask && (next->_task != prev->_task))
-            next->_task->activate();
 
         // The non-volatile pointer to volatile pointer to a non-volatile context is correct
         // and necessary because of context switches, but here, we are locked() and
@@ -513,9 +421,6 @@ int Thread::idle()
 
     CPU::int_disable();
     if(CPU::id() == 0) {
-        if(monitored)
-            Monitor::process_batch();
-
         db<Thread>(WRN) << "The last thread has exited!" << endl;
         if(reboot) {
             db<Thread>(WRN) << "Rebooting the machine ..." << endl;

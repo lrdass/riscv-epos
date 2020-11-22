@@ -19,15 +19,12 @@ public:
     Init_Application() {
         db<Init>(TRC) << "Init_Application()" << endl;
 
-        // Only the bootstrap CPU runs INIT_APPLICATION on non-kernel configurations
         if(!Traits<System>::multitask) {
             CPU::smp_barrier();
-            if(CPU::id() != 0) {
-                CPU::smp_barrier();
+            if(CPU::id() != 0)
                 return;
-            }
         }
-
+        
         // Initialize Application's heap
         db<Init>(INF) << "Initializing application's heap: " << endl;
         if(Traits<System>::multiheap) { // heap in data segment arranged by SETUP
@@ -39,7 +36,6 @@ public:
             for(unsigned int frames = MMU::allocable(); frames; frames = MMU::allocable())
                 System::_heap->free(MMU::alloc(frames), frames * sizeof(MMU::Page));
         db<Init>(INF) << "done!" << endl;
-        CPU::smp_barrier();
     }
 };
 
