@@ -65,6 +65,7 @@ public:
         _channels[_channel] = 0;
     }
 
+    PPB accuracy();
     Hertz frequency() const { return (FREQUENCY / _initial); }
     void frequency(const Hertz & f) { _initial = FREQUENCY / f; reset(); }
 
@@ -90,10 +91,6 @@ public:
     static void config(const Hertz & frequency) {
         // ASM("csrw mcause, zero"); // This clears mcause to ease debugging
         reg(MTIMECMP + MTIMECMP_CORE_OFFSET * CPU::id()) = reg(MTIME) + (CLOCK / frequency);
-    }
-
-    static Hertz clock() {
-        return CLOCK;
     }
 
 private:

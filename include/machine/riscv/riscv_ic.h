@@ -129,13 +129,13 @@ public:
     static void ipi(unsigned int cpu, Interrupt_Id i) {
         db<IC>(TRC) << "IC::ipi(cpu=" << cpu << ",int=" << i << ")" << endl;
         assert(i < INTS);
-        // accessing a Reg32 
-        reg(cpu * MSIP_CORE_OFFSET) = 0x1 << i; 
+        // accessing a Reg32
+        reg(cpu * MSIP_CORE_OFFSET) = 0x1 << i;
     }
 
     static void ipi_eoi(Interrupt_Id i) {
         // clear msip
-        reg(CPU::id() * MSIP_CORE_OFFSET) = 0; 
+        reg(CPU::id() * MSIP_CORE_OFFSET) = 0;
         ASM("csrw mcause, zero" : : : "memory", "cc");
     }
 

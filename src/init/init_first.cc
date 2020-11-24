@@ -12,6 +12,7 @@ public:
     Init_First() {
         db<Init>(TRC) << "Init_First()" << endl;
 
+        CPU::smp_barrier();
         if(!Traits<System>::multithread) {
             CPU::int_enable();
             return;
@@ -29,7 +30,6 @@ public:
         // This barrier is particularly important, since afterwards the temporary stacks
         // and data structures established by SETUP and announced as "free memory" will indeed be
         // available to user threads.
-        CPU::smp_barrier();
         //start timer
         Timer::config(Traits<Timer>::FREQUENCY);
         CPU::int_enable();

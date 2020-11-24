@@ -28,10 +28,8 @@ public:
         int me = This_Thread::id();
 
         while(CPU::cas(_owner, 0, me) != me);
-
-        db<Spin>(TRC) << "Spin::acquire[this=" << this << ",id=" << hex << me << "]() => {owner=" << _owner << dec << ",level=" << _level << "}" << endl;
-
         _level++;
+        db<Spin>(TRC) << "Spin::acquire[this=" << this << ",id=" << hex << me << "]() => {owner=" << _owner << dec << ",level=" << _level << "}" << endl;
     }
 
     void release() {
@@ -63,8 +61,7 @@ public:
     }
 
     void release() {
-//        if(_locked)
-            _locked = 0;
+        _locked = 0;
 
         db<Spin>(TRC) << "Spin::release[SPIN=" << this << "]()}" << endl;
     }
