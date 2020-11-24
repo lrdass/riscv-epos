@@ -1,32 +1,42 @@
-#include <utility/ostream.h>
-#include <time.h>
-#include <synchronizer.h>
-#include <process.h>
+// EPOS RISC-V 32 Test Program
+
+#include <architecture/cpu.h>
 
 using namespace EPOS;
 
-Thread *t1, *t2;
-OStream cout;
-
-int thread1(){
-    cout << "Primeira Thread criada com tempo maior!" << endl;
-    return 1;
-}
-
-int thread2(){
-    cout << "Segunda Thread criada com tempo menor!" << endl;
-    return 2;
-}
-
 int main()
 {
-    
-    t1 = new Thread(Thread::Configuration(Thread::READY, Thread::Criterion(180)), &thread1);
-    t2 = new Thread(Thread::Configuration(Thread::READY, Thread::Criterion(100)), &thread2);
-    t1->join();
-    t2->join();
+    OStream cout;
+    cout << "RISC-V 32bits test" << endl;
 
-    cout << "finished" << endl;
+    CPU cpu;
+
+    {
+        volatile int number = 100;
+        volatile int tmp;
+        if((tmp = cpu.fdec(number)) != 100)
+            cout << "fdec(): doesn't function properly (n=" << tmp << ", should be 100)!" << endl;
+        else
+            if((tmp = cpu.fdec(number)) != 99)
+                cout << "fdec(): doesn't function properly (n=" << tmp << ", should be 99)!" << endl;
+            else
+                cout << "fdec(): ok" << endl;
+    }
+    {
+        volatile int number = 100;
+        volatile int compare = number;
+        volatile int replacement = number - 1;
+        volatile int tmp;
+        if((tmp = cpu.cas(number, compare, replacement)) != compare)
+            cout << "cas(): doesn't function properly [1] (n=" << tmp << ", should be " << compare << ")!" << endl;
+        else
+            if((tmp = cpu.cas(number, compare, replacement)) != replacement)
+                cout << "cas(): doesn't function properly [2] (n=" << tmp << ", should be " << replacement << ")!" << endl;
+            else
+                cout << "cas(): ok" << endl;
+    }
+
+    cout << "RISC-V 32bits test finished" << endl;
 
     return 0;
 }

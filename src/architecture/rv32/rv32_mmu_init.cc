@@ -2,8 +2,6 @@
 
 #include <architecture/mmu.h>
 
-
-
 extern "C" void * _edata;
 extern "C" void * __bss_start;
 extern "C" void * _end;

@@ -1,24 +1,18 @@
-Compilando:
-executar: make APPLICATION=hello run
-- Será impresso a sequências de prints que demonstram o funcionamento do escalonador.
+Executar : make APPLICATION=hello_p3 run
 
-Validações:
-executar: make APPLICATION=hello debug
-Para os pontos seguintes optamos por exemplificar com debug pois nao conseguimos acessar valores inline de registradores e de alguns
-locais da memoria especifico no espaco de usuario.
+- Será printado a inicialização dos 4 cores
+- Alem do teste de escalonamento com o escalonador FS com filas globais (MCFS).
+- O escalonador funciona como o implementado para single-core, porem, cada core seleciona de uma fila global a thread que 
+irá executar. Por sua vez, cada core fica responsável pela execução da thread até sua finalização
 
-Validaçao da inicializacao:
-  - Breakpoint rv32_crt0.S:29, x &_bss_start ou verificar que uma variavel global que printamos esta setada com valor 0.
-  - rv32_crt0.s:33 mtvec iniciado modo 0 com endereco da label _int_entry
-  - rv32_crt0.s:15 satp iniciado com zero
-  - rv32_crt0.s:39 será possivel perceber a configuracao de satp, mtvec, bss, sp
-  - não há configuracao da cache.
+make APPLICATION= hello run
+- finc ja é implicitamente testado nas barreiras
+- O hello irá executar o teste de operaçoes atomicas (rv32_cpu_test) (fdec, cas )
 
-Validacao da UART e Escalonador:
-  - Durante a execuçao, irá printar qual thread terminou antes e depois. 
+- IPI é implicitamente testado pois os 4 cores são inicializados.
 
-Switch context:
-- Adicionar breakpoits no inicio e fim da função
-- Executar o comando `info registers`:
-  - Validar que os valores impressos para os registradores estão de acordo com a troca de contexto.
-  - Houve a mudanca do valor dos registradores, principalmente, sp
+
+- Será mostrado na tela também o teste do escalonador FS (Feedback Scheduler)  que simula múltiplas filas.
+- Onde cada core pega do escalonador com filas globais.
+
+* Existe um comportamento não-deterministico na inicialização dos cores, e durante a execução do tsl.

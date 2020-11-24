@@ -24,6 +24,7 @@ class Thread
     friend class System;
 
 protected:
+    static const bool smp = Traits<Thread>::smp;
     static const bool preemptive = Traits<Thread>::Criterion::preemptive;
     static const bool reboot = Traits<System>::reboot;
 
@@ -49,6 +50,7 @@ public:
     // Thread Scheduling Criterion
     typedef Traits<Thread>::Criterion Criterion;
     enum {
+        ISR     = Criterion::ISR,
         HIGH    = Criterion::HIGH,
         NORMAL  = Criterion::NORMAL,
         LOW     = Criterion::LOW,
@@ -78,12 +80,12 @@ public:
 
     const volatile State & state() const { return _state; }
 
-    const volatile Priority & priority() const { return _link.rank(); }
-    void priority(const Priority & p);
+    const volatile Criterion & priority() const { return _link.rank(); }
+    void priority(const Criterion & p);
 
     int join();
     void pass();
-    void suspend() { suspend(false); }
+    void suspend();
     void resume();
 
     static Thread * volatile self() { return running(); }
@@ -97,19 +99,42 @@ protected:
     Criterion & criterion() { return const_cast<Criterion &>(_link.rank()); }
     Queue::Element * link() { return &_link; }
 
-    void suspend(bool locked);
+    Criterion begin_isr(IC::Interrupt_Id i) {
+        assert(_state == RUNNING);
+        Criterion c = criterion();
+        _link.rank(Criterion::ISR + int(i));
+        return c;
+    }
+    void end_isr(IC::Interrupt_Id i, const Criterion & c) {
+        assert(_state == RUNNING);
+        _link.rank(c);
+    }
 
     static Thread * volatile running() { return _scheduler.chosen(); }
+    static Thread * volatile running_medium() { return _scheduler_medium.chosen(); }
+    static Thread * volatile running_low() { return _scheduler_low.chosen(); }
 
-    static void lock() { CPU::int_disable(); }
-    static void unlock() { CPU::int_enable(); }
-    static bool locked() { return CPU::int_disabled(); }
+    static void lock() {
+        CPU::int_disable();
+        if(smp)
+            _lock.acquire();
+    }
+
+    static void unlock() {
+        if(smp)
+            _lock.release();
+        CPU::int_enable();
+    }
+
+    static volatile bool locked() { return (smp) ? _lock.taken() : CPU::int_disabled(); }
 
     static void sleep(Queue * q);
     static void wakeup(Queue * q);
     static void wakeup_all(Queue * q);
 
     static void reschedule();
+    static void reschedule(unsigned int cpu);
+    static void rescheduler(IC::Interrupt_Id interrupt);
     static void time_slicer(IC::Interrupt_Id interrupt);
 
     static void dispatch(Thread * prev, Thread * next, bool charge = true);
@@ -128,8 +153,12 @@ protected:
     Queue::Element _link;
 
     static volatile unsigned int _thread_count;
+    int shame_level;
     static Scheduler_Timer * _timer;
     static Scheduler<Thread> _scheduler;
+    static Scheduler<Thread> _scheduler_medium;
+    static Scheduler<Thread> _scheduler_low;
+    static Spin _lock;
 };
 
 
