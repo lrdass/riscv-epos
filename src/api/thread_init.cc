@@ -13,9 +13,6 @@ void Thread::init()
 {
     db<Init, Thread>(TRC) << "Thread::init()" << endl;
 
-
-    CPU::smp_barrier();
-
     if(CPU::id() == 0) {
         // If EPOS is a library, then adjust the application entry point to __epos_app_entry,
         // which will directly call main(). In this case, _init will have already been called,
@@ -27,7 +24,6 @@ void Thread::init()
     } else
         new (SYSTEM) Thread(Thread::Configuration(Thread::RUNNING, Thread::IDLE), &Thread::idle);
 
-    CPU::smp_barrier();
 
     // The installation of the scheduler timer handler does not need to be done after the
     // creation of threads, since the constructor won't call reschedule() which won't call
@@ -46,6 +42,7 @@ void Thread::init()
     }
 
     // Transition from CPU-based locking to thread-based locking
+    CPU::smp_barrier();
     This_Thread::not_booting();
 }
 
